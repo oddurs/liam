@@ -16,7 +16,7 @@ const layers = [
     size: '5 MB',
     sizeLabel: 'budget',
     hot: true,
-    text: 'Thread-per-core on io_uring, with no locks shared between cores. HTTP/1.1, HTTP/2 and HTTP/3. rustls for the handshake, kernel TLS for the bytes. Static files, reverse proxy, and WebAssembly handlers.',
+    text: 'Thread-per-core on io_uring, with no locks shared between cores. HTTP/1.1 and HTTP/2. rustls for the handshake, kernel TLS for the bytes. Static files and a reverse proxy. HTTP/3 and Wasm handlers come after 1.0.',
   },
   {
     name: 'liam-init',
@@ -41,7 +41,7 @@ const layers = [
 ];
 
 const removed = ['shell', 'package manager', 'systemd', 'dynamic linker', 'sshd', 'cron', 'sudo', 'kernel modules', 'writable root'];
-const crates = ['rustls', 'quinn', 'h2', 'httparse', 'io-uring', 'wasmtime', 'mimalloc'];
+const crates = ['rustls', 'h2', 'httparse', 'io-uring', 'mimalloc'];
 ---
 
 <Section id="anatomy" eyebrow="Anatomy" title="Four layers. Nothing else in the image.">
@@ -106,8 +106,8 @@ const crates = ['rustls', 'quinn', 'h2', 'httparse', 'io-uring', 'wasmtime', 'mi
 
   .name {
     font-family: var(--font-mono);
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: var(--weight-bold);
+    font-size: var(--size-ui);
   }
 
   .name span {
@@ -124,14 +124,14 @@ const crates = ['rustls', 'quinn', 'h2', 'httparse', 'io-uring', 'wasmtime', 'mi
 
   .size {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: var(--size-code);
     text-align: right;
     font-variant-numeric: tabular-nums;
   }
 
   .size span {
     display: block;
-    font-size: 10px;
+    font-size: var(--size-2xs);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-mark);
@@ -160,7 +160,7 @@ const crates = ['rustls', 'quinn', 'h2', 'httparse', 'io-uring', 'wasmtime', 'mi
 
   s {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: var(--size-code);
     color: var(--color-text-muted);
     text-decoration-color: var(--color-mark);
     text-decoration-thickness: 2px;
@@ -177,7 +177,7 @@ const crates = ['rustls', 'quinn', 'h2', 'httparse', 'io-uring', 'wasmtime', 'mi
   }
 
   .crates code {
-    font-size: 12px;
+    font-size: var(--size-code);
     color: var(--color-text);
   }
 

@@ -96,13 +96,13 @@ const stamp = (ms: number) => `[${(ms / 1000).toFixed(6).padStart(12, ' ')}]`;
   .foot {
     flex-wrap: wrap;
     border-top: 1px solid var(--color-term-rule);
-    font-size: 12px;
+    font-size: var(--size-code);
   }
 
   .clock {
     font-variant-numeric: tabular-nums;
     color: var(--color-term-hot);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     font-size: var(--size-sm);
   }
 
@@ -110,7 +110,7 @@ const stamp = (ms: number) => `[${(ms / 1000).toFixed(6).padStart(12, ' ')}]`;
     list-style: none;
     padding: 14px var(--space-4) var(--space-4);
     font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-size: var(--size-xs);
     line-height: 1.95;
     overflow-x: auto;
   }
@@ -136,7 +136,7 @@ const stamp = (ms: number) => `[${(ms / 1000).toFixed(6).padStart(12, ' ')}]`;
   .final,
   .final .src {
     color: var(--color-term-strong);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
 
   .replay {
@@ -152,11 +152,5 @@ const stamp = (ms: number) => `[${(ms / 1000).toFixed(6).padStart(12, ' ')}]`;
 
   .replay:hover {
     border-color: var(--color-term-hot);
-  }
-
-  @media (max-width: 640px) {
-    .log {
-      font-size: 10.5px;
-    }
   }
 </style>

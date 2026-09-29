@@ -23,7 +23,7 @@ import ScaleChart from '../ui/ScaleChart.astro';
         liam-init plus liamd, statically linked. Your site is added on top.
       </Tile>
       <Tile value="0" label="Dropped connections">
-        On config reload, binary upgrade, or a liamd crash. The sockets outlive the server.
+        On config reload and SIGTERM drain. A liamd crash refuses no new connections.
       </Tile>
     </TileRow>
     <ScaleChart

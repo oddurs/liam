@@ -21,7 +21,7 @@ const colors = [
   'term-bg', 'term-fg', 'term-dim', 'term-hot', 'term-string', 'term-danger', 'term-success',
 ];
 const spaces = ['1', '2', '3', '4', '5', '6', '7', '8'];
-const sizes = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'];
+const sizes = ['2xs', 'xs', 'code', 'sm', 'ui', 'md', 'lg', 'xl', '2xl', '3xl'];
 const radii = ['none', 'sm', 'md', 'full'];
 const themes = ['light', 'dark'] as const;
 const sampleOutput = `<span class="prompt">$</span> liam build
@@ -254,7 +254,7 @@ const sampleOutput = `<span class="prompt">$</span> liam build
 
   .specimen.display {
     font-family: var(--font-display);
-    font-weight: 900;
+    font-weight: var(--weight-black);
     font-stretch: var(--stretch-widest);
     font-size: var(--size-2xl);
     letter-spacing: -0.03em;

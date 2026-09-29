@@ -27,7 +27,7 @@ const { value, unit, label, tag = 'Budget' } = Astro.props;
 
   .tag {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--size-2xs);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-mark);
@@ -35,8 +35,8 @@ const { value, unit, label, tag = 'Budget' } = Astro.props;
 
   .value {
     font-family: var(--font-display);
-    font-weight: 850;
-    font-stretch: 118%;
+    font-weight: var(--weight-heavy);
+    font-stretch: var(--stretch-wider);
     font-size: var(--size-3xl);
     line-height: 0.95;
     letter-spacing: -0.04em;
@@ -45,7 +45,7 @@ const { value, unit, label, tag = 'Budget' } = Astro.props;
 
   .value small {
     font-size: 0.42em;
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     letter-spacing: 0;
     margin-left: var(--space-1);
     color: var(--color-text-muted);

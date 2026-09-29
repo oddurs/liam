@@ -40,7 +40,7 @@ const { columns, rows, highlight, caption } = Astro.props;
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: var(--size-ui);
     min-width: 640px;
   }
 
@@ -55,20 +55,20 @@ const { columns, rows, highlight, caption } = Astro.props;
   thead th {
     border-top: 0;
     font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-size: var(--size-xs);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-text-muted);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
 
   tbody th {
-    font-weight: 650;
+    font-weight: var(--weight-medium);
     white-space: nowrap;
   }
 
   td :global(code) {
-    font-size: 12px;
+    font-size: var(--size-code);
   }
 
   .highlight > * {

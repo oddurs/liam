@@ -52,22 +52,30 @@
   --font-body: 'Instrument Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Martian Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
-  --size-xs: 0.6875rem;   /* 11px: mono labels */
+  --size-2xs: 0.625rem;   /* 10px: tags over numbers */
+  --size-xs: 0.6875rem;   /* 11px: mono labels, terminal lines */
+  --size-code: 0.75rem;   /* 12px: code set inside running text */
   --size-sm: 0.8125rem;   /* 13px */
+  --size-ui: 0.9375rem;   /* 15px: controls, tables, secondary copy */
   --size-md: 1rem;        /* 16px */
   --size-lg: 1.1875rem;   /* 19px */
   --size-xl: 1.5rem;      /* 24px */
   --size-2xl: clamp(1.75rem, 1.2rem + 2.2vw, 2.75rem);
   --size-3xl: clamp(2.6rem, 1.8rem + 3vw, 4rem);
   --size-4xl: clamp(96px, 23vw, 280px);
+  --size-stamp: clamp(12px, 1.3vw, 15px);   /* the timestamp beside the hero wordmark */
 
   --weight-regular: 400;
   --weight-medium: 600;
-  --weight-bold: 800;
+  --weight-bold: 750;
+  /* Display only: Archivo's heaviest steps, for numbers and the wordmark. */
+  --weight-heavy: 850;
+  --weight-black: 900;
 
   /* Archivo's width axis carries the speed; 100% is normal. */
   --stretch-normal: 100%;
   --stretch-wide: 112%;
+  --stretch-wider: 118%;
   --stretch-widest: 125%;
 
   --leading-tight: 1.05;

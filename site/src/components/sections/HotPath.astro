@@ -5,7 +5,7 @@ const steps = [
   ['Accept', 'One io_uring ring per core with multishot accept. <code>SO_REUSEPORT</code> lets the kernel spread connections across cores, so no core waits on another.'],
   ['Handshake', 'rustls runs the TLS handshake, then hands the session keys to the kernel. After that the kernel encrypts records in place and liamd never copies ciphertext.'],
   ['Route', 'Hostnames resolve through a perfect hash and paths through a radix tree. <code>liam build</code> compiles both from your config, so a lookup touches a few cache lines.'],
-  ['Respond', 'Static responses go out with <code>sendfile</code> from the page cache, already compressed, with no copy through userspace. Dynamic routes use a pooled keep-alive proxy or a Wasm handler compiled ahead of time and run on the same core.'],
+  ['Respond', 'Static responses go out with <code>sendfile</code> from the page cache, already compressed, with no copy through userspace. Dynamic routes go through a pooled keep-alive proxy to your app.'],
   ['Log', 'Structured log lines go to a per-core ring buffer and are flushed off the hot path. A slow disk or a slow collector never slows a response.'],
 ];
 ---
@@ -49,13 +49,13 @@ const steps = [
     font-family: var(--font-mono);
     font-size: var(--size-sm);
     color: var(--color-accent);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
 
   h3 {
     font-family: var(--font-display);
-    font-stretch: 110%;
-    font-weight: 750;
+    font-stretch: var(--stretch-wide);
+    font-weight: var(--weight-bold);
     font-size: var(--size-xl);
     letter-spacing: -0.015em;
   }
@@ -66,7 +66,7 @@ const steps = [
   }
 
   p :global(code) {
-    font-size: 12px;
+    font-size: var(--size-code);
     color: var(--color-text);
   }
 

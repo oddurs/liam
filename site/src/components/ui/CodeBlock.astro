@@ -59,7 +59,7 @@ const { title, note, code, output, lang = 'text' } = Astro.props;
     margin: 0;
     padding: var(--space-4);
     overflow-x: auto;
-    font-size: 12px;
+    font-size: var(--size-code);
     line-height: 1.75;
   }
 
@@ -71,7 +71,7 @@ const { title, note, code, output, lang = 'text' } = Astro.props;
 
   .codeblock :global(.error) {
     color: var(--color-term-danger);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
 
   .codeblock :global(.success) {

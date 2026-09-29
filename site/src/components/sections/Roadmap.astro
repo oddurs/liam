@@ -1,37 +1,61 @@
 ---
 import Section from '../ui/Section.astro';
+import Pill from '../ui/Pill.astro';
 
+// Mirrors the milestones in ROADMAP.md, which cairn generates; each line is that milestone's first paragraph.
 const releases = [
-  { v: '0.1', now: true, text: 'Static sites over HTTP/1.1 in a Firecracker microVM. Boot budget gate in CI.' },
-  { v: '0.2', text: 'TLS with kTLS, HTTP/2, and the OCI container target.' },
-  { v: '0.3', text: 'Reverse proxy, supervised app process, zero-downtime reload.' },
-  { v: '0.4', text: 'HTTP/3, cloud VM images with A/B slots, ACME.' },
-  { v: '0.5', text: 'WebAssembly handlers and aarch64 bare metal.' },
-  { v: '1.0', text: 'Stable config format. Every budget measured and published.' },
+  {
+    v: 'v0.1',
+    title: 'Static sites in a microVM',
+    now: true,
+    text: 'Serve a static site from a Firecracker microVM over HTTP/1.1, from cold boot to first byte inside the boot budget, measured in CI. For sites behind a load balancer or CDN that already terminates TLS.',
+  },
+  {
+    v: 'v0.2',
+    title: 'HTTPS and containers',
+    text: 'Serve a static site directly to the internet over HTTPS with HTTP/2, as an OCI container on Docker or Kubernetes, or as the microVM from v0.1.',
+  },
+  {
+    v: 'v0.3',
+    title: 'Apps behind liam',
+    text: 'Put a dynamic app behind liam. It reverse-proxies to upstreams or to one process it supervises, and it reloads, restarts and drains without failing a request.',
+  },
+  {
+    v: 'v0.4',
+    title: 'Anywhere with a kernel',
+    text: 'Run liam anywhere with a kernel: a UEFI image on AWS, GCP and bare metal, on x86_64 and aarch64, updated through A/B slots with automatic rollback, and with ACME certificates.',
+  },
+  {
+    v: 'v1.0',
+    title: 'The promise',
+    text: 'The promise. No new surface: a stable config format and CLI, every budget measured on reference hardware and published, releases a stranger can verify, and docs a stranger can deploy from.',
+  },
 ];
 ---
 
 <Section id="roadmap" eyebrow="Roadmap" title="The road to 1.0.">
-  <Fragment slot="intro">Every release adds one capability and the benchmark gate that holds it to budget.</Fragment>
+  <Fragment slot="intro">Each release ships when its budget gate passes, not on a date.</Fragment>
   <ol class="road">
     {
       releases.map((r) => (
         <li class:list={{ now: r.now }}>
           <span class="v">{r.v}</span>
-          <span class="status">{r.now ? 'In progress' : 'Planned'}</span>
-          <p>{r.text}</p>
+          <div class="what">
+            <h3>{r.title}</h3>
+            <p>{r.text}</p>
+          </div>
+          <div class="status">{r.now ? <Pill tone="accent">In progress</Pill> : <Pill>Planned</Pill>}</div>
         </li>
       ))
     }
   </ol>
+  <p class="after"><strong>After 1.0:</strong> HTTP/3, WebAssembly handlers, and a response cache for proxied routes.</p>
 </Section>
 
 <style>
   .road {
     list-style: none;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -39,73 +63,65 @@ const releases = [
   }
 
   li {
-    padding: 20px 18px 22px;
-    border-left: 1px solid var(--color-border);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr) 8rem;
+    gap: var(--space-5);
+    align-items: baseline;
+    padding: var(--space-5);
+    border-top: 1px solid var(--color-border);
   }
 
   li:first-child {
-    border-left: 0;
+    border-top: 0;
   }
 
   .v {
     font-family: var(--font-display);
-    font-weight: 850;
-    font-stretch: 120%;
-    font-size: 28px;
-    letter-spacing: -0.03em;
+    font-weight: var(--weight-heavy);
+    font-stretch: var(--stretch-wider);
+    font-size: var(--size-xl);
+    letter-spacing: var(--tracking-tight);
+    font-variant-numeric: tabular-nums;
+  }
+
+  h3 {
+    font-size: var(--size-lg);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-snug);
   }
 
   p {
-    font-size: 14px;
+    margin-top: var(--space-1);
+    font-size: var(--size-ui);
     color: var(--color-text-muted);
+    max-width: var(--measure);
   }
 
   .status {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
+    justify-self: end;
   }
 
   .now {
     background: var(--color-accent-soft);
   }
 
-  .now .status {
+  .now .v {
     color: var(--color-accent);
-    font-weight: 700;
   }
 
-  @media (max-width: 960px) {
-    .road {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    li:nth-child(4) {
-      border-left: 0;
-    }
-
-    li:nth-child(n + 4) {
-      border-top: 1px solid var(--color-border);
-    }
+  .after {
+    margin-top: var(--space-4);
+    font-size: var(--size-sm);
   }
 
   @media (max-width: 640px) {
-    .road {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
     li {
-      border-left: 0;
-      border-top: 1px solid var(--color-border);
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2);
     }
 
-    li:first-child {
-      border-top: 0;
+    .status {
+      justify-self: start;
     }
   }
 </style>

@@ -33,12 +33,11 @@ const workflow = `<span class="prompt">$</span> liam build
     />
     <Grid cols={3} gap="6">
       <Point title="Metrics and logs">
-        Prometheus metrics on a separate admin port. JSON logs to stdout or the serial console. OpenTelemetry traces when
-        you turn them on.
+        Prometheus metrics on a separate admin port. JSON logs to stdout or the serial console.
       </Point>
-      <Point title="Upgrades without downtime">
-        liam-init hands the listening sockets to the new liamd, and the old one drains. On VMs and metal the new image
-        goes into the idle slot and boots only if it passes health checks.
+      <Point title="Upgrades by replacement">
+        A new image replaces running instances; nothing is patched in place. Containers drain on SIGTERM. On VMs and
+        metal the new image goes into the idle A/B slot and rolls back if it fails its health check.
       </Point>
       <Point title="Bare metal, honestly">
         Server firmware takes seconds before any OS runs. liam cannot change that, but everything after firmware handoff

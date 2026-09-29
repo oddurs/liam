@@ -42,9 +42,9 @@ import { bootTrace } from '../../data/boot';
 
   .stamp {
     font-family: var(--font-mono);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     font-stretch: var(--stretch-normal);
-    font-size: clamp(12px, 1.3vw, 15px);
+    font-size: var(--size-stamp);
     letter-spacing: 0.02em;
     color: var(--color-accent);
     vertical-align: top;
@@ -61,8 +61,8 @@ import { bootTrace } from '../../data/boot';
 
   .thesis {
     font-family: var(--font-display);
-    font-weight: 750;
-    font-stretch: 110%;
+    font-weight: var(--weight-bold);
+    font-stretch: var(--stretch-wide);
     font-size: var(--size-2xl);
     line-height: 1.08;
     letter-spacing: -0.02em;
