@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/sections/Header.astro';
+import Hero from '../components/sections/Hero.astro';
+import Budgets from '../components/sections/Budgets.astro';
+import Anatomy from '../components/sections/Anatomy.astro';
+import HotPath from '../components/sections/HotPath.astro';
+import Config from '../components/sections/Config.astro';
+import Deploy from '../components/sections/Deploy.astro';
+import Stability from '../components/sections/Stability.astro';
+import Fits from '../components/sections/Fits.astro';
+import Roadmap from '../components/sections/Roadmap.astro';
+import Footer from '../components/sections/Footer.astro';
+---
+
+<Base
+  title="liam — the web server is the operating system"
+  description="liam is a free, open-source OS image for serving websites: one Rust binary as PID 1 on a stripped Linux kernel, booting in milliseconds."
+>
+  <Header />
+  <main>
+    <Hero />
+    <Budgets />
+    <Anatomy />
+    <HotPath />
+    <Config />
+    <Deploy />
+    <Stability />
+    <Fits />
+    <Roadmap />
+  </main>
+  <Footer />
+</Base>

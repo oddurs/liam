@@ -1,0 +1,30 @@
+---
+import Container from '../layout/Container.astro';
+import Cluster from '../layout/Cluster.astro';
+import Wordmark from '../ui/Wordmark.astro';
+---
+
+<footer class="footer">
+  <Container>
+    <Cluster gap="5" justify="between" align="baseline">
+      <Wordmark href="/" />
+      <p>
+        Free and open source under MIT or Apache-2.0. No paid edition. The numbers on this page are design budgets, and
+        each one is replaced with a measurement once its CI gate is running.
+      </p>
+    </Cluster>
+  </Container>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--color-border);
+    padding-block: 40px 56px;
+  }
+
+  p {
+    font-size: var(--size-sm);
+    color: var(--color-text-muted);
+    max-width: 44em;
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+interface Props {
+  tone?: 'mark' | 'accent' | 'neutral';
+}
+
+const { tone = 'neutral' } = Astro.props;
+---
+
+<span class:list={['pill', tone]}><slot /></span>
+
+<style>
+  .pill {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: var(--space-1) 10px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+
+  .mark {
+    color: var(--color-mark);
+    background: var(--color-mark-soft);
+  }
+
+  .accent {
+    color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+
+  .neutral {
+    color: var(--color-text-muted);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+  }
+</style>

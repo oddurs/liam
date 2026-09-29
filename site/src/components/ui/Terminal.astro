@@ -1,0 +1,162 @@
+---
+import type { TraceLine } from '../../data/boot';
+
+interface Props {
+  title: string;
+  lines: TraceLine[];
+  caption?: string;
+  /** Playback is this many times slower than the trace's own clock. */
+  slowdown?: number;
+}
+
+const { title, lines, caption, slowdown = 100 } = Astro.props;
+const end = Math.max(...lines.map((l) => l.t));
+const stamp = (ms: number) => `[${(ms / 1000).toFixed(6).padStart(12, ' ')}]`;
+---
+
+<figure class="terminal" data-terminal data-end={end} data-slowdown={slowdown}>
+  <div class="head">
+    <span>{title}</span>
+    <span class="clock" data-clock aria-hidden="true">t = {end.toFixed(1)} ms</span>
+  </div>
+  <ol class="log">
+    {
+      lines.map((line) => (
+        <li data-t={line.t} class:list={{ final: line.final }}>
+          <span class="ts">{stamp(line.t)}</span> <span class="src">{line.source.padEnd(6, ' ')}</span> {line.message}
+        </li>
+      ))
+    }
+  </ol>
+  <figcaption class="foot">
+    <span>{caption}</span>
+    <button class="replay" type="button" data-replay>Replay boot</button>
+  </figcaption>
+</figure>
+
+<script>
+  // The log is fully visible at rest; playback only dims lines that have not "run" yet.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-terminal]')) {
+    const end = Number(root.dataset.end);
+    const slowdown = Number(root.dataset.slowdown);
+    const clock = root.querySelector<HTMLElement>('[data-clock]')!;
+    const items = [...root.querySelectorAll<HTMLElement>('li[data-t]')];
+    let frame = 0;
+
+    const paint = (t: number) => {
+      clock.textContent = `t = ${t.toFixed(1)} ms`;
+      for (const li of items) li.classList.toggle('pending', Number(li.dataset.t) > t);
+    };
+
+    const play = () => {
+      cancelAnimationFrame(frame);
+      if (reduce) return paint(end);
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(end, (now - start) / slowdown);
+        paint(t);
+        if (t < end) frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
+    };
+
+    root.querySelector('[data-replay]')!.addEventListener('click', play);
+    play();
+  }
+</script>
+
+<style>
+  .terminal {
+    background: var(--color-term-bg);
+    color: var(--color-term-fg);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    min-width: 0;
+    box-shadow: var(--shadow-raised);
+  }
+
+  .head,
+  .foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    color: var(--color-term-dim);
+  }
+
+  .head {
+    border-bottom: 1px solid var(--color-term-rule);
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+  }
+
+  .foot {
+    flex-wrap: wrap;
+    border-top: 1px solid var(--color-term-rule);
+    font-size: 12px;
+  }
+
+  .clock {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-term-hot);
+    font-weight: 500;
+    font-size: var(--size-sm);
+  }
+
+  .log {
+    list-style: none;
+    padding: 14px var(--space-4) var(--space-4);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.95;
+    overflow-x: auto;
+  }
+
+  .log li {
+    white-space: pre;
+    transition: opacity var(--duration-fast) var(--ease-linear);
+  }
+
+  .ts {
+    color: var(--color-term-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .src {
+    color: var(--color-term-hot);
+  }
+
+  .log li.pending {
+    opacity: 0.28;
+  }
+
+  .final,
+  .final .src {
+    color: var(--color-term-strong);
+    font-weight: 700;
+  }
+
+  .replay {
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    color: var(--color-term-fg);
+    background: transparent;
+    border: 1px solid var(--color-term-control);
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+
+  .replay:hover {
+    border-color: var(--color-term-hot);
+  }
+
+  @media (max-width: 640px) {
+    .log {
+      font-size: 10.5px;
+    }
+  }
+</style>

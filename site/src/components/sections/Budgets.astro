@@ -1,0 +1,42 @@
+---
+import Section from '../ui/Section.astro';
+import Stack from '../layout/Stack.astro';
+import TileRow from '../ui/TileRow.astro';
+import Tile from '../ui/Tile.astro';
+import ScaleChart from '../ui/ScaleChart.astro';
+---
+
+<Section id="budgets" eyebrow="Budgets" title="Budgets, not brags.">
+  <Fragment slot="intro">
+    Each number below is a limit liam has to stay under. Each one becomes a CI gate, and a commit that misses a budget
+    fails the build. When a gate starts measuring, its number on this page is replaced by the measured one.
+  </Fragment>
+  <Stack gap="7">
+    <TileRow>
+      <Tile value="25" unit="ms" label="Cold boot to first byte">
+        Firecracker microVM, from VMM start to the first HTTP response.
+      </Tile>
+      <Tile value="5" unit="ms" label="Exec to listening">
+        As a container on an existing host kernel. Your site is mapped, not loaded.
+      </Tile>
+      <Tile value="6" unit="MB" label="Base container image">
+        liam-init plus liamd, statically linked. Your site is added on top.
+      </Tile>
+      <Tile value="0" label="Dropped connections">
+        On config reload, binary upgrade, or a liamd crash. The sockets outlive the server.
+      </Tile>
+    </TileRow>
+    <ScaleChart
+      title="Drawn to scale"
+      note="0 to 400 ms. A blink takes 100 to 400 ms."
+      max={400}
+      unit="ms"
+      ticks={[0, 100, 200, 300, 400]}
+      bars={[
+        { label: 'liam, container', range: '0 to 5 ms', from: 0, to: 5 },
+        { label: 'liam, microVM', range: '0 to 25 ms', from: 0, to: 25 },
+        { label: 'One human blink', range: '100 to 400 ms', from: 100, to: 400, tone: 'mark' },
+      ]}
+    />
+  </Stack>
+</Section>

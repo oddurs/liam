@@ -1,0 +1,58 @@
+---
+import Container from '../layout/Container.astro';
+
+interface Props {
+  id: string;
+  eyebrow: string;
+  title: string;
+}
+
+const { id, eyebrow, title } = Astro.props;
+const headingId = `${id}-title`;
+---
+
+<section class="section" id={id} aria-labelledby={headingId}>
+  <Container>
+    <p class="eyebrow">{eyebrow}</p>
+    <h2 id={headingId}>{title}</h2>
+    {Astro.slots.has('intro') && <p class="intro"><slot name="intro" /></p>}
+    <div class="body"><slot /></div>
+  </Container>
+</section>
+
+<style>
+  .section {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 14px;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    font-stretch: var(--stretch-wide);
+    font-size: var(--size-2xl);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    max-width: 20ch;
+  }
+
+  .intro {
+    margin-top: var(--space-4);
+    font-size: var(--size-lg);
+    color: var(--color-text-muted);
+    max-width: var(--measure);
+  }
+
+  .body {
+    margin-top: 40px;
+  }
+</style>

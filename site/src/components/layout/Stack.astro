@@ -1,0 +1,24 @@
+---
+import type { HTMLTag } from 'astro/types';
+import { space, type Space } from './types';
+
+interface Props {
+  as?: HTMLTag;
+  gap?: Space;
+  align?: 'stretch' | 'start' | 'center' | 'end';
+}
+
+const { as: Tag = 'div', gap = '4', align = 'stretch', ...rest } = Astro.props;
+---
+
+<Tag class="stack" style={`--stack-gap:${space(gap)};--stack-align:${align}`} {...rest}><slot /></Tag>
+
+<style>
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stack-gap);
+    align-items: var(--stack-align);
+    min-width: 0;
+  }
+</style>

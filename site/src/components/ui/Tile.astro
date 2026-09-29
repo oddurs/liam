@@ -1,0 +1,62 @@
+---
+interface Props {
+  value: string;
+  unit?: string;
+  label: string;
+  tag?: string;
+}
+
+const { value, unit, label, tag = 'Budget' } = Astro.props;
+---
+
+<div class="tile">
+  <span class="tag">{tag}</span>
+  <span class="value">{value}{unit && <small>{unit}</small>}</span>
+  <span class="label">{label}</span>
+  <span class="detail"><slot /></span>
+</div>
+
+<style>
+  .tile {
+    background: var(--color-surface);
+    padding: var(--space-5) 22px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-mark);
+  }
+
+  .value {
+    font-family: var(--font-display);
+    font-weight: 850;
+    font-stretch: 118%;
+    font-size: var(--size-3xl);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .value small {
+    font-size: 0.42em;
+    font-weight: 700;
+    letter-spacing: 0;
+    margin-left: var(--space-1);
+    color: var(--color-text-muted);
+  }
+
+  .label {
+    font-weight: var(--weight-medium);
+  }
+
+  .detail {
+    font-size: var(--size-sm);
+    color: var(--color-text-muted);
+  }
+</style>

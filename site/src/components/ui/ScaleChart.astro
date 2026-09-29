@@ -1,0 +1,161 @@
+---
+interface Bar {
+  label: string;
+  range: string;
+  from: number;
+  to: number;
+  tone?: 'accent' | 'mark';
+}
+
+interface Props {
+  title: string;
+  note?: string;
+  /** Upper end of the axis, in the same unit as the bars. */
+  max: number;
+  unit: string;
+  ticks: number[];
+  bars: Bar[];
+}
+
+const { title, note, max, unit, ticks, bars } = Astro.props;
+const pct = (v: number) => `${(v / max) * 100}%`;
+const summary = bars.map((b) => `${b.label}: ${b.range}`).join('; ');
+---
+
+<figure class="scale" role="img" aria-label={`${title}. ${summary}`}>
+  <div class="head">
+    <h3>{title}</h3>
+    {note && <p>{note}</p>}
+  </div>
+  {
+    bars.map((bar) => (
+      <div class="row">
+        <div class="label">
+          {bar.label}
+          <span>{bar.range}</span>
+        </div>
+        <div class="track" style={`--ticks:${ticks.length - 1}`}>
+          <div class:list={['bar', bar.tone ?? 'accent']} style={`left:${pct(bar.from)};width:${pct(bar.to - bar.from)}`} />
+        </div>
+      </div>
+    ))
+  }
+  <div class="row axis">
+    <span />
+    <div class="ticks">
+      {ticks.map((t, i) => <span style={`left:${pct(t)}`}>{i === ticks.length - 1 ? `${t} ${unit}` : t}</span>)}
+    </div>
+  </div>
+</figure>
+
+<style>
+  .scale {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5) clamp(16px, 3vw, 28px) 20px;
+  }
+
+  .head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    align-items: baseline;
+    margin-bottom: 20px;
+  }
+
+  .head h3 {
+    font-size: var(--size-lg);
+    font-weight: var(--weight-medium);
+  }
+
+  .head p {
+    font-size: var(--size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: center;
+    padding-block: var(--space-2);
+  }
+
+  .label {
+    font-size: var(--size-sm);
+    font-weight: var(--weight-medium);
+  }
+
+  .label span {
+    display: block;
+    font-weight: var(--weight-regular);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .track {
+    position: relative;
+    height: 22px;
+    background-image: linear-gradient(to right, var(--color-border) 1px, transparent 1px);
+    background-size: calc(100% / var(--ticks)) 100%;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .bar {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    border-radius: 2px;
+    min-width: 3px;
+  }
+
+  .accent {
+    background: var(--color-accent);
+  }
+
+  .mark {
+    background: var(--color-mark-soft);
+    border: 1px solid var(--color-mark);
+  }
+
+  .axis {
+    padding-block: var(--space-1) 0;
+  }
+
+  .ticks {
+    position: relative;
+    height: 18px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ticks span {
+    position: absolute;
+    transform: translateX(-50%);
+  }
+
+  .ticks span:first-child {
+    transform: none;
+  }
+
+  .ticks span:last-child {
+    transform: translateX(-100%);
+  }
+
+  @media (max-width: 640px) {
+    .row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
+    }
+
+    .axis > span {
+      display: none;
+    }
+  }
+</style>

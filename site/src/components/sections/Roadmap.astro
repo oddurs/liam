@@ -1,0 +1,111 @@
+---
+import Section from '../ui/Section.astro';
+
+const releases = [
+  { v: '0.1', now: true, text: 'Static sites over HTTP/1.1 in a Firecracker microVM. Boot budget gate in CI.' },
+  { v: '0.2', text: 'TLS with kTLS, HTTP/2, and the OCI container target.' },
+  { v: '0.3', text: 'Reverse proxy, supervised app process, zero-downtime reload.' },
+  { v: '0.4', text: 'HTTP/3, cloud VM images with A/B slots, ACME.' },
+  { v: '0.5', text: 'WebAssembly handlers and aarch64 bare metal.' },
+  { v: '1.0', text: 'Stable config format. Every budget measured and published.' },
+];
+---
+
+<Section id="roadmap" eyebrow="Roadmap" title="The road to 1.0.">
+  <Fragment slot="intro">Every release adds one capability and the benchmark gate that holds it to budget.</Fragment>
+  <ol class="road">
+    {
+      releases.map((r) => (
+        <li class:list={{ now: r.now }}>
+          <span class="v">{r.v}</span>
+          <span class="status">{r.now ? 'In progress' : 'Planned'}</span>
+          <p>{r.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+</Section>
+
+<style>
+  .road {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  li {
+    padding: 20px 18px 22px;
+    border-left: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  li:first-child {
+    border-left: 0;
+  }
+
+  .v {
+    font-family: var(--font-display);
+    font-weight: 850;
+    font-stretch: 120%;
+    font-size: 28px;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--color-text-muted);
+  }
+
+  .status {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .now {
+    background: var(--color-accent-soft);
+  }
+
+  .now .status {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  @media (max-width: 960px) {
+    .road {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    li:nth-child(4) {
+      border-left: 0;
+    }
+
+    li:nth-child(n + 4) {
+      border-top: 1px solid var(--color-border);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .road {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    li {
+      border-left: 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    li:first-child {
+      border-top: 0;
+    }
+  }
+</style>

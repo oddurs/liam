@@ -1,0 +1,34 @@
+---
+interface Props {
+  size?: 'sm' | 'hero';
+  href?: string;
+}
+
+const { size = 'sm', href } = Astro.props;
+const Tag = href ? 'a' : 'span';
+---
+
+<Tag class:list={['wordmark', size]} href={href}>liam<slot /></Tag>
+
+<style>
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-stretch: var(--stretch-widest);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .sm {
+    font-size: 22px;
+    letter-spacing: -0.03em;
+  }
+
+  .hero {
+    display: block;
+    font-size: var(--size-4xl);
+    line-height: 0.8;
+    letter-spacing: -0.055em;
+    margin-left: -0.04em;
+  }
+</style>
