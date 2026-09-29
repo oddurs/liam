@@ -1,5 +1,6 @@
 # liam
 
+[![ci](https://github.com/oddurs/liam/actions/workflows/ci.yml/badge.svg)](https://github.com/oddurs/liam/actions/workflows/ci.yml)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
 liam is an open-source OS image for serving websites. It is one Rust binary
