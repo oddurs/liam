@@ -135,7 +135,7 @@ Run liam anywhere with a kernel: a UEFI image on AWS, GCP and bare metal, on x86
 
 `··········` 0% · 0 of 11 done
 
-The promise. No new surface: a stable config format and CLI, every budget measured on reference hardware and published, releases a stranger can verify, and docs a stranger can deploy from.
+No new surface: a stable config format and CLI, every budget measured on reference hardware and published, releases a stranger can verify, and docs a stranger can deploy from.
 
 ### committed
 
