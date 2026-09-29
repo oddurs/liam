@@ -1,0 +1,13 @@
+[package]
+name = "liamd"
+description = "The liam web server"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+[dependencies]
+mimalloc = "0.1.52"

@@ -38,17 +38,27 @@ jobs:
           cache-dependency-path: site/pnpm-lock.yaml
       - run: ./scripts/task check
 
+  static:
+    name: static
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      # musl-gcc compiles mimalloc's C for the musl target.
+      - run: sudo apt-get install -y --no-install-recommends musl-tools
+      - run: ./scripts/task build:static
+
   # The one status check branch protection requires, so adding a job never means
   # editing a protection rule.
   required:
     name: required
     if: always()
-    needs: [check]
+    needs: [check, static]
     runs-on: ubuntu-latest
     steps:
       - name: Every job succeeded
         run: |
-          if [ "${{ needs.check.result }}" != "success" ]; then
-            echo "check: ${{ needs.check.result }}"
+          if [ "${{ needs.check.result }}" != "success" ] || [ "${{ needs.static.result }}" != "success" ]; then
+            echo "check: ${{ needs.check.result }}, static: ${{ needs.static.result }}"
             exit 1
           fi

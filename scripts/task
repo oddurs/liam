@@ -31,6 +31,7 @@ usage: scripts/task <target>
   lint       lint; warnings are errors
   test       the full test suite
   build      compile everything, including the tests
+  build:static  release musl binaries for the image; fails unless static (Linux)
   check      fmt:check, lint, test, build — what CI runs
 
 USAGE
@@ -55,6 +56,28 @@ case "${1:-}" in
   build)
     cargo build --all-targets
     site run --silent build
+    ;;
+  build:static)
+    # What goes into an image: release builds for musl, which must be static
+    # because the image has no dynamic linker. Linux only; CI runs it there.
+    target=x86_64-unknown-linux-musl
+    if [ "$(uname -s)" != Linux ]; then
+      printf 'scripts/task build:static: needs Linux with musl-gcc; CI runs it\n' >&2
+      exit 1
+    fi
+    cargo build --release --locked --target "$target" -p liamd -p liam-init
+    for bin in liamd liam-init; do
+      path="target/$target/release/$bin"
+      kind=$(file -b "$path")
+      case "$kind" in
+        *'statically linked'* | *'static-pie linked'*) ;;
+        *)
+          printf '%s is not static: %s\n' "$bin" "$kind" >&2
+          exit 1
+          ;;
+      esac
+      printf '%-10s %8s bytes  %s\n' "$bin" "$(wc -c <"$path" | tr -d ' ')" "$kind"
+    done
     ;;
   check)
     step 'format'

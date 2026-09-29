@@ -41,3 +41,7 @@ A small static Rust binary that:
 - [ ] A test shows an orphaned process is reaped.
 - [ ] Firecracker's `SendCtrlAltDel` powers the VM off cleanly.
 - [ ] The stripped binary is under 300 KB.
+
+## 2026-09-28
+
+Starting point from 0012: a liam-init that only prints its version is already 397,880 bytes (x86_64 musl, static-pie, fat LTO, stripped, panic=abort). The 300 KB criterion needs more than the shared release profile: opt-level = "z" for this crate, avoiding std::fmt, or a per-package profile. Measure with scripts/task build:static.
