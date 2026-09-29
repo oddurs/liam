@@ -1,0 +1,14 @@
+# One line ending everywhere, so a checkout on another platform does not churn.
+* text=auto eol=lf
+
+# Not written by hand, and not worth reviewing line by line.
+Cargo.lock linguist-generated=true
+ROADMAP.md linguist-generated=true
+
+# ROADMAP.md is generated from the cairn items. On a merge, re-derive it rather
+# than reconcile two renderings of different inputs.
+ROADMAP.md merge=cairn
+
+# An item is the source, not a rendering. The driver unions its sequence fields,
+# where both branches meant what they added, and leaves the rest to a person.
+cairn/items/*.md text eol=lf merge=cairn

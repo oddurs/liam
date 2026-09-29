@@ -1,0 +1,32 @@
+name: Feature request
+description: Something liam should do and does not
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Work is planned as [cairn items](https://github.com/oddurs/liam/tree/main/cairn/items),
+        and this form asks for what an item needs. Check
+        [ROADMAP.md](https://github.com/oddurs/liam/blob/main/ROADMAP.md) first,
+        because it may already be planned.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What you cannot do today. The situation, not the feature.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What you think should happen. A rough shape is fine.
+    validations:
+      required: false
+  - type: textarea
+    id: budget
+    attributes:
+      label: Budget impact
+      description: Would this cost boot time, image size, or hot-path work? Say so if you know.
+    validations:
+      required: false

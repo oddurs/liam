@@ -1,0 +1,51 @@
+name: Bug report
+description: Something liam does that it should not
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happens
+    attributes:
+      label: What happens
+      description: What you did, and what liam did.
+    validations:
+      required: true
+  - type: textarea
+    id: what-should-happen
+    attributes:
+      label: What should happen
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: The smallest liam.toml and site that show it, and the commands you ran.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `liam --version`, or the commit.
+    validations:
+      required: true
+  - type: dropdown
+    id: target
+    attributes:
+      label: Target
+      options:
+        - container (OCI)
+        - Firecracker microVM
+        - cloud VM
+        - bare metal
+        - not applicable
+    validations:
+      required: true
+  - type: input
+    id: host
+    attributes:
+      label: Host
+      description: Host OS and kernel, CPU architecture, and the hypervisor or container runtime.
+    validations:
+      required: true
