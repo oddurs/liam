@@ -29,7 +29,7 @@ Releases ship when their gate passes, not on a date.
 
 ## v0.1 — Static sites in a microVM
 
-`··········` 0% · 0 of 24 done
+`#·········` 4% · 1 of 24 done
 
 Serve a static site from a Firecracker microVM over HTTP/1.1, from cold boot to first byte inside the boot budget, measured in CI. For sites behind a load balancer or CDN that already terminates TLS.
 
@@ -60,8 +60,11 @@ Serve a static site from a Firecracker microVM over HTTP/1.1, from cold boot to 
 
 ### in progress
 
-- [ ] `0012` Scaffold the Cargo workspace and the task seam <sup>chore · p0 · s · infra</sup>
 - [ ] `0035` Project microsite and design system <sup>feature · p2 · m · site</sup>
+
+### done
+
+- [x] `0012` Scaffold the Cargo workspace and the task seam <sup>chore · p0 · s · infra</sup>
 
 ## v0.2 — HTTPS and containers
 

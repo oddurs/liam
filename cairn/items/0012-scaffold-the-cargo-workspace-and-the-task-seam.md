@@ -3,12 +3,12 @@ id: 12
 uid: 10481a9f-b883-4165-bd4f-a3236d394e11
 title: Scaffold the Cargo workspace and the task seam
 type: chore
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-09-28
 created: 2026-09-28
 updated: 2026-09-28
+closed_at: 2026-09-28
 priority: p0
 area: infra
 effort: s
@@ -31,7 +31,7 @@ Nothing can be built, tested or gated until the repository has its shape. Every 
 
 - [x] `scripts/task check` passes on the empty workspace.
 - [x] A deliberate clippy warning makes `scripts/task lint` exit non-zero.
-- [ ] `file` reports the release `liamd` and `liam-init` binaries as statically linked.
+- [x] `file` reports the release `liamd` and `liam-init` binaries as statically linked.
 - [x] Both license files are present, and every crate declares `MIT OR Apache-2.0`.
 
 ## 2026-09-28
@@ -49,3 +49,11 @@ Static builds are a separate verb, scripts/task build:static, run by a 'static' 
 ## 2026-09-28
 
 Evidence. 1: scripts/task check green on macOS. 2: a planted clippy::len_zero made scripts/task lint exit 101; removing it, 0. 4: LICENSE-MIT and LICENSE-APACHE present; cargo metadata shows liam, liam-init and liamd all MIT OR Apache-2.0.
+
+## 2026-09-28
+
+Evidence. 3: CI run 36514087437, static job: liamd 543,400 bytes and liam-init 397,880 bytes, both 'ELF 64-bit LSB pie executable, x86-64, static-pie linked, stripped'. Static-pie is fully static: there is no interpreter.
+
+## Result
+
+The workspace has liam (CLI), liamd and liam-init. The release profile is fat LTO, one codegen unit, panic=abort, stripped. scripts/task build:static builds static-pie musl binaries and CI's static job rejects anything dynamic. Baseline sizes: liamd 543 KB, liam-init 398 KB. Library crates are created by the items that fill them (0017-0020), not here.
