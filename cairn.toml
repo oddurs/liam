@@ -1,0 +1,360 @@
+# cairn.toml — the schema for liam's roadmap and issues.
+#
+#   cairn config          show the resolved schema
+#   cairn check           validate every item against it
+#   cairn next            what is ready to start
+#   man cairn             full reference
+#
+# Order is behaviour in this file: status order is board and sort order, and enum
+# value order is sort order. Do not alphabetise it.
+
+format = 5
+
+[project]
+name = "liam"
+description = "An open-source OS image for serving websites. One Rust binary as PID 1 on a stripped Linux kernel, held to published speed budgets."
+dir = "cairn/items"
+default_type = "feature"
+default_status = "backlog"
+# url = "https://github.com/OWNER/liam/blob/main"   # set when the repo is public; enables render.link_items
+claim_stale_after = 7     # surface an abandoned claim; never release it automatically
+# A new project has no legacy of unticked boxes, so closing is gated on criteria
+# from day one. The acceptance criteria are the definition of done.
+require_criteria = true
+
+# ─── Item types ──────────────────────────────────────────────────────────────
+# Every work type asks for acceptance criteria. Features also say which budget
+# they touch, because in this project a change that is correct but slow is not done.
+
+[[type]]
+name = "feature"
+icon = "+"
+color = "cyan"
+template = """
+## Problem
+
+## Proposal
+
+## Budget impact
+
+Which budget this touches (boot, listen, size, zero-drop, no-alloc), or "none".
+
+## Acceptance criteria
+
+- [ ]
+"""
+
+[[type]]
+name = "bug"
+icon = "!"
+color = "red"
+template = """
+## What happens
+
+## What should happen
+
+## Reproduction
+
+1.
+
+## Acceptance criteria
+
+- [ ] A regression test reproduces the failure and passes with the fix.
+"""
+
+[[type]]
+name = "spike"
+icon = "?"
+color = "magenta"
+description = "A timeboxed question. Close it with --result; the result is what dependent items are handed"
+template = """
+## Question
+
+## Why it blocks
+
+## Timebox
+
+## Approach
+
+## Acceptance criteria
+
+- [ ] The question is answered with evidence: numbers, commands, and links someone else can rerun.
+- [ ] The items it unblocks are updated or created to match the answer.
+- [ ] Closed with `--result` stating the answer in one paragraph.
+"""
+
+[[type]]
+name = "chore"
+icon = "~"
+color = "gray"
+template = """
+## Purpose
+
+## Approach
+
+## Acceptance criteria
+
+- [ ]
+"""
+
+[[type]]
+name = "docs"
+icon = "*"
+color = "blue"
+template = """
+## Reader and question
+
+## Change
+
+## Acceptance criteria
+
+- [ ] The reader can complete the described task with the current release.
+"""
+
+[[type]]
+name = "decision"
+icon = "="
+color = "yellow"
+description = "A choice worth remembering after the work is finished"
+template = """
+## Context
+
+## Options and tradeoffs
+
+## Decision
+
+## Revisit when
+
+## Acceptance criteria
+
+- [ ] The choice, its evidence, and its consequences are recorded.
+"""
+
+# A release. Work ships in exactly one. Milestones are gated by evidence (the
+# release gate below), not by dates, so `due` stays unset unless a real external
+# date exists.
+[[type]]
+name = "milestone"
+groups = "one"
+inverse = "scheduled"
+description = "A release somebody could install and use"
+template = """
+One paragraph: what a user can do when this ships.
+
+## Release gate
+
+- [ ]
+
+## Explicitly not in this milestone
+
+-
+"""
+
+# A published speed or reliability promise. Work that exists to meet, measure or
+# protect a budget is filed under it with `budget=<key>`; `cairn list -t budget`
+# shows each promise with the progress of the work behind it. Many-valued: a
+# change to the static path can serve both `no-alloc` and `listen`.
+[[type]]
+name = "budget"
+groups = "many"
+inverse = "protected_by"
+description = "A number liam promises to stay under, enforced by a CI gate"
+template = """
+## Promise
+
+## How it is measured
+
+## Gate
+
+## Measured
+
+Not yet measured.
+"""
+
+# ─── Statuses ────────────────────────────────────────────────────────────────
+# backlog: not committed. planned: committed to its milestone.
+
+[[status]]
+name = "backlog"
+category = "open"
+color = "gray"
+label = "not committed"
+
+[[status]]
+name = "planned"
+category = "open"
+color = "blue"
+label = "committed"
+
+[[status]]
+name = "doing"
+label = "in progress"
+category = "active"
+color = "yellow"
+
+[[status]]
+name = "blocked"
+category = "open"          # waiting is not work in progress
+color = "red"
+label = "waiting"
+
+[[status]]
+name = "done"
+category = "done"
+color = "green"
+
+[[status]]
+name = "dropped"
+category = "dropped"
+color = "gray"
+board = false
+
+# ─── Fields ──────────────────────────────────────────────────────────────────
+
+[[field]]
+name = "priority"
+kind = "enum"
+values = ["p0", "p1", "p2", "p3"]
+default = "p2"
+column = true
+description = "Relative to the item's milestone. p0: the milestone does not ship without it; p1: expected in it; p2: useful; p3: optional"
+
+[[field]]
+name = "effort"
+kind = "enum"
+values = ["s", "m", "l", "xl"]
+column = true
+description = "Rough size, never an estimate. s: hours; m: a day; l: several days; xl: split it or spike it"
+
+# The subsystems, matching the planned crates and directories.
+[[field]]
+name = "area"
+kind = "enum"
+values = [
+  "kernel",    # Linux config, boot path, drivers
+  "init",      # liam-init: PID 1, sockets, supervision
+  "io",        # io_uring runtime, thread-per-core, sockets
+  "http",      # HTTP/1.1, HTTP/2, HTTP/3
+  "tls",       # rustls, kTLS, certificates, ACME
+  "router",    # host and path matching, redirects, headers
+  "pack",      # site pack: build, precompression, static serving
+  "config",    # liam.toml parsing, validation, reload
+  "proxy",     # upstreams, pooling, WebSockets
+  "image",     # OCI, Firecracker, UKI assembly
+  "cli",       # the liam command
+  "deploy",    # liam deploy, cloud targets, A/B updates
+  "bench",     # benchmark harness and budget gates
+  "ops",       # logs, metrics, watchdog
+  "test",      # fuzzing, simulation, soak
+  "security",  # release signing, SBOM, policy
+  "infra",     # repo, CI, release pipeline
+  "site",      # the project website and design system
+  "docs",
+]
+column = true
+description = "Subsystem this touches"
+
+[[field]]
+name = "due"
+kind = "date"
+description = "A committed external date, YYYY-MM-DD. Leave unset when the release is gated by evidence"
+
+[[field]]
+name = "part_of"
+kind = "ref"
+target = "*"
+cardinality = "many"
+acyclic = true
+rollup = true
+inverse = "contains"
+description = "A larger piece of work this belongs to"
+
+# ─── Saved views ─────────────────────────────────────────────────────────────
+# `cairn list --view NAME`, `cairn board --view NAME`
+
+[[view]]
+name = "now"
+description = "Work someone is doing now"
+filter = "category=active"
+sort = "priority,id"
+columns = ["id", "assignee", "priority", "area", "title"]
+
+[[view]]
+name = "next"
+description = "Committed work with nothing unfinished in front of it"
+filter = "status=planned,blocked=false"
+sort = "milestone,priority,id"
+columns = ["id", "milestone", "priority", "effort", "area", "title"]
+
+[[view]]
+name = "release"
+description = "What stands between us and each release: open p0 work"
+filter = "priority=p0,category=open|active"
+sort = "milestone,blocked,id"
+columns = ["id", "milestone", "status", "area", "title"]
+
+[[view]]
+name = "spikes"
+description = "Open questions; answer these first, other work waits on them"
+filter = "type=spike,category=open|active"
+sort = "milestone,priority,id"
+columns = ["id", "milestone", "priority", "title"]
+
+[[view]]
+name = "waiting"
+description = "Needs an external action or a decision; read the item's last note"
+filter = "status=blocked"
+sort = "priority,id"
+
+[[view]]
+name = "dependencies"
+description = "Work held by an unfinished dependency"
+filter = "blocked=true,category=open|active"
+sort = "milestone,priority,id"
+columns = ["id", "milestone", "priority", "blockers", "title"]
+
+[[view]]
+name = "triage"
+description = "Filed but not scheduled: accept into a milestone, defer to later, or drop"
+filter = "milestone=,category=open"
+columns = ["id", "type", "area", "title", "created"]
+
+[[view]]
+name = "later"
+description = "Good ideas off the path to 1.0"
+filter = "milestone=later,category=open|active"
+sort = "priority,id"
+
+[[view]]
+name = "decisions"
+description = "Choices worth remembering, newest first"
+filter = "type=decision|spike,category=done"
+sort = "-updated,id"
+
+[[view]]
+name = "history"
+description = "Finished and dropped work, by last edit"
+filter = "category=done|dropped"
+sort = "-updated,id"
+
+# ─── Hooks ───────────────────────────────────────────────────────────────────
+# Array form: no shell, portable. Keeps ROADMAP.md in step with the items.
+
+[hooks]
+after-create = ["cairn", "render", "-q"]
+after-change = ["cairn", "render", "-q"]
+after-remove = ["cairn", "render", "-q"]
+
+# ─── Rendered roadmap ────────────────────────────────────────────────────────
+
+[render]
+target = "ROADMAP.md"
+title = "Roadmap"
+group_by = "milestone"
+include = "category!=dropped"
+checkbox = true
+show_ids = true
+progress = true
+group_by_status = true
+link_items = false        # needs project.url
+header = "cairn/roadmap-intro.md"
