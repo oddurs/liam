@@ -1,0 +1,80 @@
+/*
+ * Semantic tokens: named for what they are for. The only tokens components use.
+ *
+ * Themes apply to :root and to any subtree carrying data-theme, so /design can
+ * show both themes side by side without script.
+ */
+:root,
+[data-theme='light'] {
+  --color-bg: var(--n-50);
+  --color-surface: var(--n-0);
+  --color-text: var(--n-900);
+  --color-text-muted: var(--n-600);
+  --color-border: var(--n-200);
+  --color-accent: var(--blue-600);
+  --color-accent-fg: var(--n-0);
+  --color-accent-soft: var(--blue-100);
+  --color-mark: var(--amber-600);
+  --color-mark-soft: var(--amber-100);
+  --color-focus: var(--blue-600);
+
+  /* Terminal surfaces stay dark in both themes. */
+  --color-term-bg: var(--n-925);
+  --color-term-fg: var(--n-100);
+  --color-term-dim: var(--n-500);
+  --color-term-hot: var(--blue-350);
+  --color-term-string: var(--amber-200);
+  --color-term-danger: var(--red-300);
+  --color-term-success: var(--green-300);
+  --color-term-strong: var(--n-0);
+  --color-term-rule: rgb(255 255 255 / 0.07);
+  --color-term-control: rgb(255 255 255 / 0.18);
+
+  --shadow-raised: 0 24px 60px -30px rgb(10 15 40 / 0.55);
+
+  --gutter: clamp(16px, 4vw, 40px);
+  --measure: 40em;
+  --page-max: 1120px;
+  --space-section: clamp(56px, 8vw, 96px);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-bg: var(--n-950);
+    --color-surface: var(--n-850);
+    --color-text: var(--n-100);
+    --color-text-muted: var(--n-400);
+    --color-border: var(--n-800);
+    --color-accent: var(--blue-400);
+    --color-accent-fg: var(--n-925);
+    --color-accent-soft: var(--blue-900);
+    --color-mark: var(--amber-400);
+    --color-mark-soft: var(--amber-900);
+    --color-focus: var(--blue-400);
+    --color-term-bg: var(--n-975);
+    --color-term-dim: var(--n-700);
+    --color-term-hot: var(--blue-300);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'],
+[data-theme='dark'] {
+  --color-bg: var(--n-950);
+  --color-surface: var(--n-850);
+  --color-text: var(--n-100);
+  --color-text-muted: var(--n-400);
+  --color-border: var(--n-800);
+  --color-accent: var(--blue-400);
+  --color-accent-fg: var(--n-925);
+  --color-accent-soft: var(--blue-900);
+  --color-mark: var(--amber-400);
+  --color-mark-soft: var(--amber-900);
+  --color-focus: var(--blue-400);
+  --color-term-bg: var(--n-975);
+  --color-term-dim: var(--n-700);
+  --color-term-hot: var(--blue-300);
+  color-scheme: dark;
+}

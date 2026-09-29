@@ -1,0 +1,80 @@
+---
+import { Code } from 'astro:components';
+
+interface Props {
+  title: string;
+  note?: string;
+  /** Source to highlight at build time. */
+  code?: string;
+  /**
+   * Hand-formatted terminal output as trusted HTML, for when there is no grammar to highlight.
+   * A string rather than a slot: template whitespace is compressed, and output needs its newlines.
+   */
+  output?: string;
+  lang?: 'toml' | 'sh' | 'rust' | 'text';
+}
+
+const { title, note, code, output, lang = 'text' } = Astro.props;
+---
+
+<div class="codeblock">
+  <div class="head"><span>{title}</span>{note && <span>{note}</span>}</div>
+  {code ? <Code code={code} lang={lang} theme="css-variables" /> : <pre set:html={output} />}
+</div>
+
+<style>
+  .codeblock {
+    /* Shiki's css-variables theme reads these, so highlighting follows the tokens. */
+    --astro-code-foreground: var(--color-term-fg);
+    --astro-code-background: transparent;
+    --astro-code-token-comment: var(--color-term-dim);
+    --astro-code-token-keyword: var(--color-term-hot);
+    --astro-code-token-string: var(--color-term-string);
+    --astro-code-token-string-expression: var(--color-term-string);
+    --astro-code-token-constant: var(--color-term-fg);
+    --astro-code-token-parameter: var(--color-term-fg);
+    --astro-code-token-function: var(--color-term-hot);
+    --astro-code-token-punctuation: var(--color-term-dim);
+    --astro-code-token-link: var(--color-term-hot);
+
+    background: var(--color-term-bg);
+    color: var(--color-term-fg);
+    border-radius: var(--radius-md);
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 10px var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    color: var(--color-term-dim);
+    border-bottom: 1px solid var(--color-term-rule);
+  }
+
+  .codeblock :global(pre) {
+    margin: 0;
+    padding: var(--space-4);
+    overflow-x: auto;
+    font-size: var(--size-code);
+    line-height: 1.75;
+  }
+
+  /* Classes for hand-formatted terminal output. */
+  .codeblock :global(.prompt),
+  .codeblock :global(.comment) {
+    color: var(--color-term-dim);
+  }
+
+  .codeblock :global(.error) {
+    color: var(--color-term-danger);
+    font-weight: var(--weight-bold);
+  }
+
+  .codeblock :global(.success) {
+    color: var(--color-term-success);
+  }
+</style>

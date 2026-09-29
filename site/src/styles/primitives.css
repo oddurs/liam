@@ -1,0 +1,111 @@
+/*
+ * Primitive tokens: the raw palette and scales. Named for what they are.
+ * Nothing outside src/styles reads these; components use semantic.css.
+ */
+:root {
+  /* Neutral ramp, biased toward the accent's blue so greys read as chosen. */
+  --n-0: #FFFFFF;
+  --n-50: #F3F4F7;
+  --n-100: #E7EAF2;
+  --n-200: #D9DCE5;
+  --n-400: #98A0B5;
+  --n-500: #5E6782;
+  --n-600: #586074;
+  --n-700: #525B75;
+  --n-800: #222A3D;
+  --n-850: #10162A;
+  --n-900: #0C1220;
+  --n-925: #0A0F1C;
+  --n-950: #090D16;
+  --n-975: #05080F;
+
+  /* Signal: the one accent. */
+  --blue-100: #E3E6FF;
+  --blue-300: #A7AFFF;
+  --blue-350: #9AA3FF;
+  --blue-400: #8E98FF;
+  --blue-600: #2B38E8;
+  --blue-900: #1A2150;
+
+  /* Mark: budgets and timing markers. */
+  --amber-100: #F6E6CC;
+  --amber-200: #F2C98A;
+  --amber-400: #F0A640;
+  --amber-600: #B86A00;
+  --amber-900: #3A2A12;
+
+  --red-300: #FF8F8F;
+  --green-300: #8FE3B0;
+
+  /* Space: one scale for padding, gap and margin. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Type */
+  --font-display: 'Archivo Variable', 'Arial Black', system-ui, sans-serif;
+  --font-body: 'Instrument Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Martian Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --size-2xs: 0.625rem;   /* 10px: tags over numbers */
+  --size-xs: 0.6875rem;   /* 11px: mono labels, terminal lines */
+  --size-code: 0.75rem;   /* 12px: code set inside running text */
+  --size-sm: 0.8125rem;   /* 13px */
+  --size-ui: 0.9375rem;   /* 15px: controls, tables, secondary copy */
+  --size-md: 1rem;        /* 16px */
+  --size-lg: 1.1875rem;   /* 19px */
+  --size-xl: 1.5rem;      /* 24px */
+  --size-2xl: clamp(1.75rem, 1.2rem + 2.2vw, 2.75rem);
+  --size-3xl: clamp(2.6rem, 1.8rem + 3vw, 4rem);
+  --size-4xl: clamp(96px, 23vw, 280px);
+  --size-stamp: clamp(12px, 1.3vw, 15px);   /* the timestamp beside the hero wordmark */
+
+  --weight-regular: 400;
+  --weight-medium: 600;
+  --weight-bold: 750;
+  /* Display only: Archivo's heaviest steps, for numbers and the wordmark. */
+  --weight-heavy: 850;
+  --weight-black: 900;
+
+  /* Archivo's width axis carries the speed; 100% is normal. */
+  --stretch-normal: 100%;
+  --stretch-wide: 112%;
+  --stretch-wider: 118%;
+  --stretch-widest: 125%;
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.3;
+  --leading-body: 1.6;
+
+  --tracking-tight: -0.025em;
+  --tracking-label: 0.1em;
+
+  /* Shape */
+  --radius-none: 0;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-full: 999px;
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-linear: linear;
+
+  /* Layers */
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-overlay: 30;
+  --z-toast: 40;
+
+  /* Breakpoints (reference only; media queries cannot read custom properties):
+     sm 640px, md 960px, lg 1120px. */
+}

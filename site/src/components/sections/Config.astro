@@ -1,0 +1,93 @@
+---
+import Section from '../ui/Section.astro';
+import Stack from '../layout/Stack.astro';
+import Point from '../ui/Point.astro';
+import CodeBlock from '../ui/CodeBlock.astro';
+
+const toml = `[site]
+domains  = ["acme.com", "www.acme.com"]
+root     = "./dist"                 # packed into the image
+compress = ["br", "zstd", "gzip"]   # once, at build
+
+[tls]
+acme = "letsencrypt"                # or cert = "/secrets/tls.pem"
+hsts = true
+
+[app]                               # optional: one process liam supervises
+exec = "/app/server"
+port = 8080
+
+[[route]]
+path    = "/api/*"
+proxy   = "app"
+timeout = "10s"
+
+[[route]]
+path  = "/assets/*"
+cache = "immutable"
+
+[[route]]
+path         = "/*"
+spa_fallback = "/index.html"
+
+[limits]
+max_connections = 100_000
+header_bytes    = "16KiB"
+body_bytes      = "8MiB"
+
+[deploy]
+targets  = ["oci", "firecracker", "aws"]
+health   = "/healthz"
+rollback = "on-failed-health"`;
+
+const buildError = `<span class="prompt">$</span> liam build
+<span class="error">error[L204]</span>: spa_fallback "/index.html" is not in ./dist
+  <span class="comment">--&gt;</span> liam.toml:25
+  <span class="comment">help</span>: run your site build first, or point root at its output`;
+---
+
+<Section id="config" eyebrow="Configure" title="One file, checked before it ships.">
+  <div class="split">
+    <Stack gap="5">
+      <Point title="Errors show up at build time">
+        <code>liam build</code> validates every route, file, certificate source and limit. A typo fails on your laptop or
+        in CI. It never reaches production.
+      </Point>
+      <Point title="Secure defaults">
+        Timeouts on every phase of a request, header and body size limits, per-IP connection caps, and HSTS. You can
+        loosen each one, but none of them starts open.
+      </Point>
+      <Point title="Reloads without a restart">
+        A new config is compiled, checked, and swapped in atomically. In-flight requests finish on the old routes and new
+        ones use the new routes.
+      </Point>
+      <Point title="Certificates never block boot">
+        ACME certificates are issued at deploy time and cached. Renewal runs in the background, so a cold start never
+        waits on the network.
+      </Point>
+      <Point title="Overrides from the environment">
+        Any key can be set with <code>LIAM_*</code> variables, a mounted file, or cloud instance metadata. One image works
+        for staging and production.
+      </Point>
+    </Stack>
+    <Stack gap="4">
+      <CodeBlock title="liam.toml" note="example" code={toml} lang="toml" />
+      <CodeBlock title="terminal" note="a mistake, caught early" output={buildError} />
+    </Stack>
+  </div>
+</Section>
+
+<style>
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(28px, 5vw, 56px);
+    align-items: start;
+  }
+
+  @media (max-width: 960px) {
+    .split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,71 @@
+---
+interface Props {
+  variant?: 'primary' | 'secondary';
+  href?: string;
+  type?: 'button' | 'submit';
+  disabled?: boolean;
+}
+
+const { variant = 'secondary', href, type = 'button', disabled = false, ...rest } = Astro.props;
+---
+
+{
+  href ? (
+    <a class:list={['button', variant]} href={disabled ? undefined : href} aria-disabled={disabled ? 'true' : undefined} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button class:list={['button', variant]} type={type} disabled={disabled} {...rest}>
+      <slot />
+    </button>
+  )
+}
+
+<style>
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 11px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    font: inherit;
+    font-weight: var(--weight-medium);
+    font-size: var(--size-ui);
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      border-color var(--duration-fast) var(--ease-standard),
+      filter var(--duration-fast) var(--ease-standard);
+  }
+
+  .secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .secondary:hover {
+    border-color: var(--color-text);
+  }
+
+  .primary {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+
+  .primary:hover {
+    filter: brightness(1.08);
+  }
+
+  .button:active {
+    filter: brightness(0.95);
+  }
+
+  .button[aria-disabled='true'],
+  .button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>

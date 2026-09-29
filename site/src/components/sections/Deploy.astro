@@ -1,0 +1,48 @@
+---
+import Section from '../ui/Section.astro';
+import Stack from '../layout/Stack.astro';
+import Grid from '../layout/Grid.astro';
+import Point from '../ui/Point.astro';
+import CodeBlock from '../ui/CodeBlock.astro';
+import Table from '../ui/Table.astro';
+
+const workflow = `<span class="prompt">$</span> liam build
+  <span class="success">built</span> acme.oci     6.1 MB + site     <span class="comment">container image</span>
+  <span class="success">built</span> acme.fc     15.2 MB + site     <span class="comment">vmlinux + initramfs for Firecracker</span>
+  <span class="success">built</span> acme.efi    15.4 MB + site     <span class="comment">unified kernel image for cloud VMs and metal</span>
+<span class="prompt">$</span> liam run                          <span class="comment"># boots locally: microVM on Linux, container on macOS</span>
+<span class="prompt">$</span> liam deploy --target aws          <span class="comment"># A/B slot swap, rolls back if /healthz fails</span>`;
+---
+
+<Section id="deploy" eyebrow="Deploy" title="Build once. Run it anywhere with a kernel.">
+  <Fragment slot="intro">
+    One build produces every target you list, from the same binary and the same site pack. What you test locally is
+    byte for byte what runs in production.
+  </Fragment>
+  <Stack gap="7">
+    <CodeBlock title="terminal" note="the whole workflow" output={workflow} />
+    <Table
+      caption="Deploy targets"
+      columns={['Target', 'Artifact', 'Runs on', 'How it boots']}
+      rows={[
+        ['Container', '<code>.oci</code>', 'Docker, Kubernetes, Fly.io, Cloud Run, ECS', "liam-init as PID 1 on the host's kernel"],
+        ['microVM', '<code>.fc</code>', 'Firecracker, Cloud Hypervisor', 'PVH direct boot, initramfs built into the kernel'],
+        ['Cloud VM', '<code>.efi</code> disk', 'AWS, GCP, Hetzner, any UEFI host', 'Unified kernel image with A/B slots'],
+        ['Bare metal', '<code>.efi</code>', 'x86_64 and aarch64 servers', 'Same image, from disk or iPXE'],
+      ]}
+    />
+    <Grid cols={3} gap="6">
+      <Point title="Metrics and logs">
+        Prometheus metrics on a separate admin port. JSON logs to stdout or the serial console.
+      </Point>
+      <Point title="Upgrades by replacement">
+        A new image replaces running instances; nothing is patched in place. Containers drain on SIGTERM. On VMs and
+        metal the new image goes into the idle A/B slot and rolls back if it fails its health check.
+      </Point>
+      <Point title="Bare metal, honestly">
+        Server firmware takes seconds before any OS runs. liam cannot change that, but everything after firmware handoff
+        is held to the same budgets.
+      </Point>
+    </Grid>
+  </Stack>
+</Section>

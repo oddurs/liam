@@ -1,0 +1,330 @@
+---
+import Base from '../layouts/Base.astro';
+import Container from '../components/layout/Container.astro';
+import Stack from '../components/layout/Stack.astro';
+import Cluster from '../components/layout/Cluster.astro';
+import Grid from '../components/layout/Grid.astro';
+import Wordmark from '../components/ui/Wordmark.astro';
+import Button from '../components/ui/Button.astro';
+import Pill from '../components/ui/Pill.astro';
+import Tile from '../components/ui/Tile.astro';
+import TileRow from '../components/ui/TileRow.astro';
+import Terminal from '../components/ui/Terminal.astro';
+import CodeBlock from '../components/ui/CodeBlock.astro';
+import Table from '../components/ui/Table.astro';
+import ScaleChart from '../components/ui/ScaleChart.astro';
+import Point from '../components/ui/Point.astro';
+import { bootTrace } from '../data/boot';
+
+const colors = [
+  'bg', 'surface', 'text', 'text-muted', 'border', 'accent', 'accent-fg', 'accent-soft', 'mark', 'mark-soft', 'focus',
+  'term-bg', 'term-fg', 'term-dim', 'term-hot', 'term-string', 'term-danger', 'term-success',
+];
+const spaces = ['1', '2', '3', '4', '5', '6', '7', '8'];
+const sizes = ['2xs', 'xs', 'code', 'sm', 'ui', 'md', 'lg', 'xl', '2xl', '3xl'];
+const radii = ['none', 'sm', 'md', 'full'];
+const themes = ['light', 'dark'] as const;
+const sampleOutput = `<span class="prompt">$</span> liam build
+<span class="error">error[L204]</span>: spa_fallback "/index.html" is not in ./dist
+  <span class="success">built</span> acme.oci`;
+---
+
+<Base title="liam design system" description="Tokens, layout primitives and components the liam site is built from.">
+  <header class="top">
+    <Container>
+      <Cluster gap="4" justify="between">
+        <Wordmark href="/" />
+        <span class="crumb">design system</span>
+      </Cluster>
+    </Container>
+  </header>
+
+  <main>
+    <Container>
+      <Stack gap="8">
+        <section>
+          <h2>Colour</h2>
+          <p class="note">Semantic tokens, shown in both themes. Components use only these.</p>
+          <div class="themes">
+            {
+              themes.map((theme) => (
+                <div class="themed" data-theme={theme}>
+                  <p class="label">{theme}</p>
+                  <div class="swatches">
+                    {colors.map((c) => (
+                      <div class="swatch">
+                        <span class="chip" style={`background:var(--color-${c})`} />
+                        <code>--color-{c}</code>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        <section>
+          <h2>Type</h2>
+          <Stack gap="3">
+            <p class="specimen display">Archivo, wide · display</p>
+            <p class="specimen body">Instrument Sans · body text for reading</p>
+            <p class="specimen mono">Martian Mono · [0.019044] data and labels</p>
+          </Stack>
+          <Stack gap="2">
+            {sizes.map((s) => <p class="size-row" style={`font-size:var(--size-${s})`}><code>--size-{s}</code> Boot to first byte</p>)}
+          </Stack>
+        </section>
+
+        <section>
+          <h2>Space and radius</h2>
+          <Stack gap="2">
+            {
+              spaces.map((s) => (
+                <div class="space-row">
+                  <code>--space-{s}</code>
+                  <span class="space-bar" style={`width:var(--space-${s})`} />
+                </div>
+              ))
+            }
+          </Stack>
+          <Cluster gap="4">
+            {radii.map((r) => <div class="radius" style={`border-radius:var(--radius-${r})`}><code>{r}</code></div>)}
+          </Cluster>
+        </section>
+
+        <section>
+          <h2>Layout primitives</h2>
+          <p class="note">Stack, Cluster and Grid take gap steps from the space scale only.</p>
+          <Grid cols={3} gap="4">
+            <div class="demo"><Stack gap="2"><span class="box" /><span class="box" /><span class="box" /></Stack></div>
+            <div class="demo"><Cluster gap="2"><span class="box" /><span class="box" /><span class="box" /></Cluster></div>
+            <div class="demo"><Grid cols={3} gap="2"><span class="box" /><span class="box" /><span class="box" /></Grid></div>
+          </Grid>
+        </section>
+
+        {
+          themes.map((theme) => (
+            <section class="themed components" data-theme={theme}>
+              <h2>Components · {theme}</h2>
+              <Stack gap="6">
+                <Cluster gap="3">
+                  <Button variant="primary" href="#">Primary</Button>
+                  <Button>Secondary</Button>
+                  <Button disabled>Disabled</Button>
+                  <Pill tone="mark">Pre-alpha</Pill>
+                  <Pill tone="accent">In progress</Pill>
+                  <Pill>Planned</Pill>
+                </Cluster>
+                <TileRow>
+                  <Tile value="25" unit="ms" label="Cold boot to first byte">Firecracker microVM.</Tile>
+                  <Tile value="5" unit="ms" label="Exec to listening">As a container.</Tile>
+                  <Tile value="6" unit="MB" label="Base container image">Statically linked.</Tile>
+                  <Tile value="0" label="Dropped connections">On reload or crash.</Tile>
+                </TileRow>
+                <Grid cols={2} gap="5">
+                  <Terminal title="firecracker · 2 vCPU" lines={bootTrace} caption="Replayed at 1/100 speed." />
+                  <Stack gap="4">
+                    <CodeBlock title="liam.toml" code={'[site]\nroot = "./dist"   # packed at build\ncompress = ["br", "zstd"]'} lang="toml" />
+                    <CodeBlock title="terminal" output={sampleOutput} />
+                  </Stack>
+                </Grid>
+                <ScaleChart
+                  title="ScaleChart"
+                  note="Bars drawn against one axis."
+                  max={400}
+                  unit="ms"
+                  ticks={[0, 100, 200, 300, 400]}
+                  bars={[
+                    { label: 'liam, microVM', range: '0 to 25 ms', from: 0, to: 25 },
+                    { label: 'One human blink', range: '100 to 400 ms', from: 100, to: 400, tone: 'mark' },
+                  ]}
+                />
+                <Table
+                  caption="Table example"
+                  columns={['Target', 'Artifact', 'Runs on']}
+                  highlight={1}
+                  rows={[
+                    ['Container', '<code>.oci</code>', 'Docker, Kubernetes'],
+                    ['microVM', '<code>.fc</code>', 'Firecracker'],
+                  ]}
+                />
+                <Grid cols={3} gap="5">
+                  <Point title="Point">A heading and its explanation.</Point>
+                  <Point title="Point, ruled" ruled>With a rule above it, for grids of claims.</Point>
+                </Grid>
+              </Stack>
+            </section>
+          ))
+        }
+      </Stack>
+    </Container>
+  </main>
+</Base>
+
+<style>
+  .top {
+    border-bottom: 1px solid var(--color-border);
+    padding-block: 14px;
+  }
+
+  .crumb {
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  main {
+    padding-block: var(--space-8);
+  }
+
+  section > h2 {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    font-stretch: var(--stretch-wide);
+    font-size: var(--size-xl);
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-4);
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .note {
+    color: var(--color-text-muted);
+    margin-top: calc(var(--space-3) * -1);
+  }
+
+  .themes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .themed {
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: var(--space-2) var(--space-4);
+  }
+
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .chip {
+    flex: none;
+    width: var(--space-6);
+    height: var(--space-6);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+  }
+
+  .swatch code,
+  .size-row code,
+  .space-row code,
+  .radius code {
+    font-size: var(--size-xs);
+    color: var(--color-text-muted);
+  }
+
+  .specimen.display {
+    font-family: var(--font-display);
+    font-weight: var(--weight-black);
+    font-stretch: var(--stretch-widest);
+    font-size: var(--size-2xl);
+    letter-spacing: -0.03em;
+  }
+
+  .specimen.body {
+    font-size: var(--size-lg);
+  }
+
+  .specimen.mono {
+    font-family: var(--font-mono);
+    font-size: var(--size-sm);
+  }
+
+  .size-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    line-height: var(--leading-snug);
+  }
+
+  .size-row code {
+    flex: none;
+    width: 8rem;
+  }
+
+  .space-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .space-row code {
+    width: 8rem;
+  }
+
+  .space-bar {
+    height: var(--space-3);
+    background: var(--color-accent);
+    border-radius: 2px;
+  }
+
+  .radius {
+    width: var(--space-8);
+    height: var(--space-8);
+    display: grid;
+    place-items: center;
+    background: var(--color-accent-soft);
+    border: 1px solid var(--color-accent);
+  }
+
+  .demo {
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-3);
+  }
+
+  .box {
+    display: block;
+    min-width: var(--space-6);
+    height: var(--space-5);
+    background: var(--color-accent-soft);
+    border: 1px solid var(--color-accent);
+    border-radius: 3px;
+  }
+
+  @media (max-width: 960px) {
+    .themes {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

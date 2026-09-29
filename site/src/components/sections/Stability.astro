@@ -1,0 +1,20 @@
+---
+import Section from '../ui/Section.astro';
+import Grid from '../layout/Grid.astro';
+import Point from '../ui/Point.astro';
+
+const points = [
+  ['Sockets outlive the server', 'liam-init holds the listening sockets. If liamd crashes, the kernel queues new connections while it restarts, and none are refused. Requests the crashed process was serving are lost.'],
+  ['Everything is bounded', 'Header size, body size, connection count, and a timeout on each phase of a request. Slowloris and memory-exhaustion attacks hit a wall.'],
+  ['Parsers under constant fuzzing', 'The HTTP/1 parser, HTTP/2 frames, the TLS glue and the config parser run under continuous fuzzing. Every crash found becomes a regression test.'],
+  ['Simulated before it runs', 'The event loop runs under deterministic simulation with injected faults: dropped packets, full disks, slow peers. Failing runs replay exactly.'],
+  ['Reboot is a recovery tool', 'A hung machine trips the watchdog and reboots. With a boot measured in milliseconds, that is cheaper than most health-check intervals.'],
+  ['Nothing drifts', 'The root filesystem is read-only and there is no shell to log into, so the image you tested stays the image that runs.'],
+];
+---
+
+<Section id="stability" eyebrow="Stability" title="Fast, and still up next month.">
+  <Grid cols={3} gap="6">
+    {points.map(([title, text]) => <Point title={title} ruled>{text}</Point>)}
+  </Grid>
+</Section>

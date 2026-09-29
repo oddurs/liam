@@ -1,0 +1,32 @@
+---
+import type { HTMLTag } from 'astro/types';
+import { space, type Space } from './types';
+
+interface Props {
+  as?: HTMLTag;
+  gap?: Space;
+  align?: 'start' | 'center' | 'baseline' | 'end';
+  justify?: 'start' | 'center' | 'between' | 'end';
+}
+
+const { as: Tag = 'div', gap = '3', align = 'center', justify = 'start', ...rest } = Astro.props;
+const justifyValue = justify === 'between' ? 'space-between' : justify;
+---
+
+<Tag
+  class="cluster"
+  style={`--cluster-gap:${space(gap)};--cluster-align:${align};--cluster-justify:${justifyValue}`}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  .cluster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--cluster-gap);
+    align-items: var(--cluster-align);
+    justify-content: var(--cluster-justify);
+  }
+</style>

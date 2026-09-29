@@ -1,0 +1,81 @@
+---
+interface Props {
+  columns: string[];
+  /** Cells are trusted, site-authored HTML so they can carry <code>. */
+  rows: string[][];
+  /** Index of the row to set apart, e.g. liam in a comparison. */
+  highlight?: number;
+  caption?: string;
+}
+
+const { columns, rows, highlight, caption } = Astro.props;
+---
+
+<div class="scroller" role="region" aria-label={caption ?? columns.join(', ')} tabindex="0">
+  <table>
+    {caption && <caption class="visually-hidden">{caption}</caption>}
+    <thead>
+      <tr>{columns.map((c) => <th scope="col">{c}</th>)}</tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row, i) => (
+          <tr class:list={{ highlight: i === highlight }}>
+            {row.map((cell, j) => (j === 0 ? <th scope="row" set:html={cell} /> : <td set:html={cell} />))}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .scroller {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--size-ui);
+    min-width: 640px;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 14px 18px;
+    border-top: 1px solid var(--color-border);
+    vertical-align: top;
+  }
+
+  thead th {
+    border-top: 0;
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    font-weight: var(--weight-medium);
+  }
+
+  tbody th {
+    font-weight: var(--weight-medium);
+    white-space: nowrap;
+  }
+
+  td :global(code) {
+    font-size: var(--size-code);
+  }
+
+  .highlight > * {
+    background: var(--color-accent-soft);
+  }
+
+  .highlight th {
+    color: var(--color-accent);
+  }
+</style>

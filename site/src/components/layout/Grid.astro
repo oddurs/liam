@@ -1,0 +1,41 @@
+---
+import type { HTMLTag } from 'astro/types';
+import { space, type Space } from './types';
+
+interface Props {
+  as?: HTMLTag;
+  gap?: Space;
+  /** Columns at full width; collapses to two (three for six) at md and one column at sm. */
+  cols?: 1 | 2 | 3 | 4 | 6;
+}
+
+const { as: Tag = 'div', gap = '5', cols = 3, ...rest } = Astro.props;
+---
+
+<Tag
+  class="grid"
+  style={`--grid-gap:${space(gap)};--grid-cols:${cols};--grid-cols-md:${Math.min(cols, cols === 6 ? 3 : 2)}`}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  .grid {
+    display: grid;
+    gap: var(--grid-gap);
+    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  }
+
+  @media (max-width: 960px) {
+    .grid {
+      grid-template-columns: repeat(var(--grid-cols-md), minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

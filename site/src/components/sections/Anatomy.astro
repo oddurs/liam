@@ -1,0 +1,194 @@
+---
+import Section from '../ui/Section.astro';
+import Cluster from '../layout/Cluster.astro';
+
+const layers = [
+  {
+    name: 'your site',
+    sub: '/site.pack',
+    size: 'yours',
+    sizeLabel: 'size',
+    text: 'Packed at build time into one memory-mapped file. Every asset is pre-compressed with Brotli, zstd and gzip, and its ETag is computed in advance. No compression happens at request time.',
+  },
+  {
+    name: 'liamd',
+    sub: 'the server',
+    size: '5 MB',
+    sizeLabel: 'budget',
+    hot: true,
+    text: 'Thread-per-core on io_uring, with no locks shared between cores. HTTP/1.1 and HTTP/2. rustls for the handshake, kernel TLS for the bytes. Static files and a reverse proxy. HTTP/3 and Wasm handlers come after 1.0.',
+  },
+  {
+    name: 'liam-init',
+    sub: 'PID 1',
+    size: '300 KB',
+    sizeLabel: 'budget',
+    text: 'Mounts, sysctls and entropy. It owns the listening sockets and restarts liamd in under a millisecond if it exits. It can also supervise one app process of your own.',
+  },
+  {
+    name: 'kernel',
+    sub: 'Linux LTS',
+    size: '9 MB',
+    sizeLabel: 'budget',
+    text: 'No loadable modules. Drivers for virtio, NVMe, AWS ENA, Google gVNIC and common server NICs only. io_uring, kTLS and BPF built in. Tracks upstream stable releases.',
+  },
+  {
+    name: 'hardware',
+    sub: 'or hypervisor',
+    base: true,
+    text: 'x86_64 and aarch64. Firecracker, Cloud Hypervisor, QEMU, AWS, GCP, Hetzner, or a server in a rack.',
+  },
+];
+
+const removed = ['shell', 'package manager', 'systemd', 'dynamic linker', 'sshd', 'cron', 'sudo', 'kernel modules', 'writable root'];
+const crates = ['rustls', 'h2', 'httparse', 'io-uring', 'mimalloc'];
+---
+
+<Section id="anatomy" eyebrow="Anatomy" title="Four layers. Nothing else in the image.">
+  <Fragment slot="intro">
+    Most server images are a general-purpose OS with a web server installed on top. liam drops the general-purpose OS
+    and keeps only what serves requests. Linux handles the hardware. Rust does the rest.
+  </Fragment>
+
+  <ol class="stack">
+    {
+      layers.map((l) => (
+        <li class:list={['layer', { hot: l.hot, base: l.base }]}>
+          <div class="name">
+            {l.name}
+            <span>{l.sub}</span>
+          </div>
+          <p>{l.text}</p>
+          <div class="size">
+            {l.size}
+            {l.sizeLabel && <span>{l.sizeLabel}</span>}
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="gone">
+    <Cluster gap="2">
+      <span class="lead">Not in the image:</span>
+      {removed.map((r) => <s>{r}</s>)}
+    </Cluster>
+  </div>
+  <p class="crates">
+    You cannot exploit a shell that is not there, and you never patch a package you do not ship. Userspace is Rust end
+    to end, built on {crates.map((c, i) => <><code>{c}</code>{i < crates.length - 2 ? ', ' : i === crates.length - 2 ? ' and ' : ''}</>)}.
+    Every crate except the small, audited I/O core is <code>#![forbid(unsafe_code)]</code>.
+  </p>
+</Section>
+
+<style>
+  .stack {
+    list-style: none;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .layer {
+    display: grid;
+    grid-template-columns: 12rem minmax(0, 1fr) 7rem;
+    gap: 20px;
+    padding: 20px 22px;
+    border-top: 1px solid var(--color-border);
+    align-items: baseline;
+  }
+
+  .layer:first-child {
+    border-top: 0;
+  }
+
+  .name {
+    font-family: var(--font-mono);
+    font-weight: var(--weight-bold);
+    font-size: var(--size-ui);
+  }
+
+  .name span {
+    display: block;
+    font-weight: var(--weight-regular);
+    font-size: var(--size-xs);
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+
+  .layer p {
+    color: var(--color-text-muted);
+  }
+
+  .size {
+    font-family: var(--font-mono);
+    font-size: var(--size-code);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .size span {
+    display: block;
+    font-size: var(--size-2xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-mark);
+  }
+
+  .hot {
+    background: var(--color-accent-soft);
+  }
+
+  .hot .name {
+    color: var(--color-accent);
+  }
+
+  .base {
+    background: transparent;
+  }
+
+  .gone {
+    margin-top: 28px;
+  }
+
+  .lead {
+    font-weight: var(--weight-medium);
+    margin-right: 6px;
+  }
+
+  s {
+    font-family: var(--font-mono);
+    font-size: var(--size-code);
+    color: var(--color-text-muted);
+    text-decoration-color: var(--color-mark);
+    text-decoration-thickness: 2px;
+    padding: 3px var(--space-2);
+    border: 1px dashed var(--color-border);
+    border-radius: 4px;
+  }
+
+  .crates {
+    margin-top: 20px;
+    font-size: var(--size-sm);
+    color: var(--color-text-muted);
+    max-width: 60em;
+  }
+
+  .crates code {
+    font-size: var(--size-code);
+    color: var(--color-text);
+  }
+
+  @media (max-width: 640px) {
+    .layer {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
+    }
+
+    .size {
+      text-align: left;
+    }
+  }
+</style>
