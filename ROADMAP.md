@@ -35,7 +35,6 @@ Serve a static site from a Firecracker microVM over HTTP/1.1, from cold boot to 
 
 ### committed
 
-- [ ] `0012` Scaffold the Cargo workspace and the task seam <sup>chore · p0 · s · infra</sup>
 - [ ] `0013` CI: format, lint and test every pull request <sup>chore · p0 · s · infra</sup>
 - [ ] `0014` How fast can a stripped Linux LTS kernel boot in Firecracker? <sup>spike · p0 · m · kernel</sup>
 - [ ] `0015` Which io_uring runtime does liamd build on? <sup>spike · p0 · m · io</sup>
@@ -61,6 +60,7 @@ Serve a static site from a Firecracker microVM over HTTP/1.1, from cold boot to 
 
 ### in progress
 
+- [ ] `0012` Scaffold the Cargo workspace and the task seam <sup>chore · p0 · s · infra</sup>
 - [ ] `0035` Project microsite and design system <sup>feature · p2 · m · site</sup>
 
 ## v0.2 — HTTPS and containers

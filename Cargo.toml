@@ -9,3 +9,12 @@ rust-version = "1.98"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/oddurs/liam"
 authors = ["Oddur Sigurdsson"]
+
+# Image binaries are built once and booted many times, so build time is spent
+# freely for speed and size.
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
