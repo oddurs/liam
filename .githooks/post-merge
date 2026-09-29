@@ -13,6 +13,8 @@ set -eu
 
 command -v cairn >/dev/null 2>&1 || exit 0
 cd "$(git rev-parse --show-toplevel)"
+# A branch from before the backlog existed has nothing to settle.
+[ -f cairn.toml ] || exit 0
 
 cairn renumber --quiet
 cairn render --quiet
