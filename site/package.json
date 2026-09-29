@@ -2,6 +2,7 @@
   "name": "liam-site",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.28.1",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

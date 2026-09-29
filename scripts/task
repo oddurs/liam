@@ -14,6 +14,14 @@ step() {
   printf '\n\033[1;34m▸ %s\033[0m\n' "$1"
 }
 
+# The site is a separate toolchain behind the same verbs. Installing from the
+# lockfile every time is cheap when nothing changed and keeps a stale
+# node_modules from passing a check CI would fail.
+site() {
+  pnpm --dir site install --frozen-lockfile --silent
+  pnpm --dir site "$@"
+}
+
 usage() {
   cat <<'USAGE'
 usage: scripts/task <target>
@@ -29,6 +37,7 @@ USAGE
 }
 
 case "${1:-}" in
+  # The site has no formatter configured; Rust formatting is the whole target.
   fmt)
     cargo fmt --all
     ;;
@@ -37,12 +46,15 @@ case "${1:-}" in
     ;;
   lint)
     cargo clippy --all-targets --all-features -- -D warnings
+    site run --silent check
     ;;
+  # The site has no tests yet; astro check in lint and the build cover it.
   test)
     cargo test --all-targets
     ;;
   build)
     cargo build --all-targets
+    site run --silent build
     ;;
   check)
     step 'format'
