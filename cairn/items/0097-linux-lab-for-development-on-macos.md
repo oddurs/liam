@@ -3,10 +3,11 @@ id: 97
 uid: fcf55ec2-86a4-4d81-9d93-8eb637cc9992
 title: Linux lab for development on macOS
 type: chore
-status: doing
+status: done
 milestone: v0.1
 created: 2026-10-02
 updated: 2026-10-02
+closed_at: 2026-10-02
 priority: p0
 effort: s
 area: infra
@@ -64,3 +65,11 @@ Evidence 6: CARGO_TARGET_DIR in the lab is /home/oddurs/.cache/liam-lab/target/U
 ## 2026-10-02
 
 Evidence 7: CONTRIBUTING.md, under Checks, says in three lines that on macOS Linux-only checks run in an OrbStack machine via scripts/lab setup and a prefixed command, and that Firecracker boots stay in CI.
+
+## 2026-10-02
+
+Review follow-up: the musl prefix is now versioned (~/.local/x86_64-linux-musl-1.2.5), so bumping musl_version rebuilds rather than keeping old headers; rustup-init is downloaded to a file before it runs, so a failed download fails setup with curl's error. Re-verified: setup on liam-lab built the versioned prefix, the old one was removed, and a clean build:static gave liamd 543392 and liam-init 397880 bytes, static-pie x86-64. A second throwaway machine was provisioned from nothing by the revised script (exit 0), build:static passed on it, and it was deleted.
+
+## Result
+
+scripts/lab runs any command in the liam-lab OrbStack machine (Ubuntu 26.04 aarch64, kernel 7.0 with io_uring enabled) at the caller's directory, with CARGO_TARGET_DIR under ~/.cache/liam-lab/target/<worktree path> so worktrees and macOS never share a target. scripts/lab setup provisions it idempotently in about 1.5 minutes from nothing. x86_64 static builds work: linker x86_64-linux-gnu-gcc, and C dependencies compile against an x86_64 musl 1.2.5 built from source, because Ubuntu has no cross musl. scripts/lab scripts/task build:static gives the same sizes as CI to within 8 bytes. x86_64 binaries run in the lab under Rosetta. No KVM: Firecracker boots stay in CI. Run scripts/task check on macOS, because site/node_modules belongs to macOS.

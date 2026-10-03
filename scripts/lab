@@ -97,8 +97,12 @@ setup() {
     set -eu
     channel=$1 musl_version=$2 musl_sha256=$3
     if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
-      curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs |
-        sh -s -- -y --quiet --no-modify-path --default-toolchain none >/dev/null
+      # Downloaded first: piped into sh, a failed download is an empty script
+      # that exits 0.
+      init=$(mktemp)
+      curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs -o "$init"
+      sh "$init" -y --quiet --no-modify-path --default-toolchain none >/dev/null
+      rm -f "$init"
     fi
     PATH="$HOME/.cargo/bin:$PATH"
     rustup toolchain install "$channel" --profile minimal \
@@ -112,7 +116,8 @@ setup() {
     # from upstream source for x86_64: the version Rust bundles for the target,
     # with the checksum Ubuntu publishes for the same tarball. At link time Rust
     # supplies the libc and start files; gcc only drives the link.
-    musl="$HOME/.local/x86_64-linux-musl"
+    # Versioned, so bumping musl_version rebuilds instead of keeping old headers.
+    musl="$HOME/.local/x86_64-linux-musl-$musl_version"
     if [ ! -x "$musl/bin/musl-gcc" ]; then
       echo "  building musl $musl_version for x86_64"
       src=$(mktemp -d)
