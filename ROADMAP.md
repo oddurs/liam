@@ -29,13 +29,12 @@ Releases ship when their gate passes, not on a date.
 
 ## v0.1 — Static sites in a microVM
 
-`#·········` 8% · 2 of 25 done
+`##········` 12% · 3 of 25 done
 
 Serve a static site from a Firecracker microVM over HTTP/1.1, from cold boot to first byte inside the boot budget, measured in CI. For sites behind a load balancer or CDN that already terminates TLS.
 
 ### committed
 
-- [ ] `0013` CI: format, lint and test every pull request <sup>chore · p0 · s · infra</sup>
 - [ ] `0014` How fast can a stripped Linux LTS kernel boot in Firecracker? <sup>spike · p0 · m · kernel</sup>
 - [ ] `0015` Which io_uring runtime does liamd build on? <sup>spike · p0 · m · io</sup>
 - [ ] `0016` Where does the site live inside a microVM? <sup>spike · p0 · s · image</sup>
@@ -65,6 +64,7 @@ Serve a static site from a Firecracker microVM over HTTP/1.1, from cold boot to 
 ### done
 
 - [x] `0012` Scaffold the Cargo workspace and the task seam <sup>chore · p0 · s · infra</sup>
+- [x] `0013` CI: format, lint and test every pull request <sup>chore · p0 · s · infra</sup>
 - [x] `0097` Linux lab for development on macOS <sup>chore · p0 · s · infra</sup>
 
 ## v0.2 — HTTPS and containers
