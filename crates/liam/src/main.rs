@@ -23,5 +23,5 @@ const USAGE: &str = "usage: liam [--version | --help]
 Nothing builds images yet. The plan is in ROADMAP.md.";
 
 fn version_line() -> String {
-    format!("liam {}", env!("CARGO_PKG_VERSION"))
+    return format!("liam {}", env!("CARGO_PKG_VERSION"));
 }
