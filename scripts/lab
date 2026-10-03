@@ -1,0 +1,154 @@
+#!/bin/sh
+# A Linux machine for the checks macOS cannot run: static musl builds, io_uring,
+# kernel builds. It is an OrbStack machine, which mounts /Users at the same path,
+# so a worktree is the same directory on both sides and nothing is copied.
+#
+# The VM has no KVM. Anything that boots Firecracker still runs in CI.
+set -eu
+
+machine=liam-lab
+repo=$(cd "$(dirname "$0")/.." && pwd)
+
+die() {
+  printf 'scripts/lab: %s\n' "$1" >&2
+  exit 1
+}
+
+say() {
+  printf '▸ %s\n' "$1"
+}
+
+usage() {
+  cat <<'USAGE'
+usage: scripts/lab <command...>
+       scripts/lab setup
+
+  <command...>  run a command in the liam-lab machine, in the current directory
+  setup         install the build toolchain in liam-lab; safe to run again
+
+Builds in the lab get a target directory of their own under the VM user's home,
+one per worktree, so they never collide with the macOS target/ or with each
+other. Example:
+
+  scripts/lab scripts/task build:static
+  scripts/lab cargo test --workspace
+
+Firecracker needs KVM, which the lab does not have; that runs in CI. Run
+scripts/task check on macOS: the site's node_modules in the worktree are macOS's.
+USAGE
+}
+
+require_machine() {
+  command -v orb >/dev/null 2>&1 ||
+    die 'orb not found. Install OrbStack (brew install orbstack), then: orb create ubuntu liam-lab'
+  orb list --quiet | grep -qx "$machine" ||
+    die "no OrbStack machine named $machine. Create it: orb create ubuntu $machine && scripts/lab setup"
+}
+
+# Runs in the VM through `sh -c`, so $HOME is the VM user's home. The target
+# directory is keyed on the worktree's path: parallel worktrees stay apart, and
+# the same worktree reuses its incremental build.
+run() {
+  require_machine
+  top=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+  # shellcheck disable=SC2016 # expanded in the VM, not here
+  exec orb -m "$machine" -w "$(pwd)" sh -c '
+    key=$1
+    shift
+    export PATH="$HOME/.cargo/bin:$PATH"
+    export CARGO_TARGET_DIR="$HOME/.cache/liam-lab/target$key"
+    exec "$@"
+  ' lab "$top" "$@"
+}
+
+musl_version=1.2.5
+musl_sha256=a9a118bbe84d8764da0ea0d28b3ab3fae8477fc7e4085d90102b8596fc7c75e4
+
+packages='build-essential musl-tools gcc-x86-64-linux-gnu binutils-x86-64-linux-gnu
+flex bison bc libelf-dev libssl-dev cpio file curl qemu-system-x86'
+
+setup() {
+  require_machine
+  channel=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' "$repo/rust-toolchain.toml")
+  [ -n "$channel" ] || die "no channel in $repo/rust-toolchain.toml"
+
+  say "packages"
+  # shellcheck disable=SC2016,SC2086 # expanded in the VM; the list is split on purpose
+  orb -m "$machine" -u root sh -c '
+    set -eu
+    missing=
+    for p in "$@"; do
+      dpkg-query -W -f="\${Status}" "$p" 2>/dev/null | grep -q "ok installed" ||
+        missing="$missing $p"
+    done
+    if [ -z "$missing" ]; then
+      echo "  all installed"
+      exit 0
+    fi
+    echo "  installing:$missing"
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -qq
+    apt-get install -y -qq --no-install-recommends $missing
+  ' setup $packages
+
+  say "rust $channel and an x86_64 musl toolchain"
+  # shellcheck disable=SC2016 # expanded in the VM
+  orb -m "$machine" sh -c '
+    set -eu
+    channel=$1 musl_version=$2 musl_sha256=$3
+    if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
+      # Downloaded first: piped into sh, a failed download is an empty script
+      # that exits 0.
+      init=$(mktemp)
+      curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs -o "$init"
+      sh "$init" -y --quiet --no-modify-path --default-toolchain none >/dev/null
+      rm -f "$init"
+    fi
+    PATH="$HOME/.cargo/bin:$PATH"
+    rustup toolchain install "$channel" --profile minimal \
+      --component clippy,rustfmt \
+      --target x86_64-unknown-linux-musl,aarch64-unknown-linux-musl
+    rustup default "$channel"
+
+    # The machine is aarch64, so the x86_64 musl target needs a cross linker,
+    # and C dependencies (mimalloc) a compiler that sees x86_64 musl headers.
+    # Ubuntu packages musl for the native architecture only, so musl is built
+    # from upstream source for x86_64: the version Rust bundles for the target,
+    # with the checksum Ubuntu publishes for the same tarball. At link time Rust
+    # supplies the libc and start files; gcc only drives the link.
+    # Versioned, so bumping musl_version rebuilds instead of keeping old headers.
+    musl="$HOME/.local/x86_64-linux-musl-$musl_version"
+    if [ ! -x "$musl/bin/musl-gcc" ]; then
+      echo "  building musl $musl_version for x86_64"
+      src=$(mktemp -d)
+      curl -fsSL "https://musl.libc.org/releases/musl-$musl_version.tar.gz" \
+        -o "$src/musl.tar.gz"
+      echo "$musl_sha256  $src/musl.tar.gz" | sha256sum -c --quiet
+      tar -xzf "$src/musl.tar.gz" -C "$src" --strip-components=1
+      (cd "$src" && ./configure --prefix="$musl" --target=x86_64-linux-gnu \
+        --disable-shared --enable-wrapper=gcc >/dev/null && make -s -j"$(nproc)" install >/dev/null)
+      rm -rf "$src"
+    fi
+
+    mkdir -p "$HOME/.cargo"
+    cat >"$HOME/.cargo/config.toml" <<EOF
+[target.x86_64-unknown-linux-musl]
+linker = "x86_64-linux-gnu-gcc"
+
+[env]
+CC_x86_64_unknown_linux_musl = "$musl/bin/musl-gcc"
+AR_x86_64_unknown_linux_musl = "x86_64-linux-gnu-ar"
+EOF
+    echo "  $(rustc --version)"
+    rustup target list --installed | sed "s/^/  target /"
+  ' setup "$channel" "$musl_version" "$musl_sha256"
+
+  say "ready: scripts/lab <command...>"
+}
+
+case "${1:-}" in
+'') usage >&2 && exit 2 ;;
+-h | --help | help) usage ;;
+setup) setup ;;
+*) run "$@" ;;
+esac

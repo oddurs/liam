@@ -61,6 +61,10 @@ Everything goes through one seam, so CI and your machine cannot disagree:
 scripts/task check     # fmt:check, lint, test, build
 ```
 
+On macOS, Linux-only checks run in an [OrbStack](https://orbstack.dev) machine:
+`scripts/lab setup` once, then prefix the command, as in
+`scripts/lab scripts/task build:static`. Firecracker needs KVM, so boots stay in CI.
+
 Never use `--no-verify`. If a check is wrong, fix the check in its own pull
 request. A bug fix arrives with the test that would have caught it.
 

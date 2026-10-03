@@ -66,8 +66,9 @@ case "${1:-}" in
       exit 1
     fi
     cargo build --release --locked --target "$target" -p liamd -p liam-init
+    # scripts/lab points CARGO_TARGET_DIR outside the checkout.
     for bin in liamd liam-init; do
-      path="target/$target/release/$bin"
+      path="${CARGO_TARGET_DIR:-target}/$target/release/$bin"
       kind=$(file -b "$path")
       case "$kind" in
         *'statically linked'* | *'static-pie linked'*) ;;
